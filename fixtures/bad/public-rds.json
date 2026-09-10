@@ -1,0 +1,1 @@
+{"Resources":{"OrdersDatabase":{"Type":"AWS::RDS::DBInstance","Properties":{"StorageEncrypted":false,"PubliclyAccessible":true,"MultiAZ":false,"BackupRetentionPeriod":0,"DeletionProtection":false,"EnableCloudwatchLogsExports":[],"AllocatedStorage":100}}}}

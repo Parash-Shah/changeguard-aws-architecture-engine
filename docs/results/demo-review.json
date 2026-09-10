@@ -1,0 +1,96 @@
+{
+  "reviewId": "aeff4634-5578-42fd-8960-18ceff0173fc",
+  "createdAt": "2026-09-10T08:01:27.621750359Z",
+  "score": 70,
+  "status": "FAIL",
+  "summary": {
+    "INFO": 0,
+    "LOW": 0,
+    "MEDIUM": 0,
+    "HIGH": 1,
+    "CRITICAL": 1
+  },
+  "pillarScores": {
+    "SECURITY": {
+      "score": 80,
+      "evaluated": 2,
+      "unknown": 0
+    },
+    "RELIABILITY": {
+      "score": 90,
+      "evaluated": 3,
+      "unknown": 0
+    },
+    "OPERATIONAL_EXCELLENCE": {
+      "score": 100,
+      "evaluated": 1,
+      "unknown": 0
+    },
+    "PERFORMANCE_EFFICIENCY": {
+      "score": 100,
+      "evaluated": 1,
+      "unknown": 0
+    },
+    "COST_OPTIMIZATION": {
+      "score": 100,
+      "evaluated": 1,
+      "unknown": 0
+    },
+    "SUSTAINABILITY": {
+      "score": null,
+      "evaluated": 0,
+      "unknown": 0
+    }
+  },
+  "findings": [
+    {
+      "ruleId": "REL-RDS-001",
+      "ruleVersion": "1",
+      "resourceId": "aws_db_instance.orders",
+      "pillar": "RELIABILITY",
+      "severity": "HIGH",
+      "outcome": "FAIL",
+      "message": "Production RDS should use Multi-AZ",
+      "recommendation": "Configure MultiAZ to satisfy this policy; use a dated exception when justified.",
+      "classification": "NEW",
+      "suppressed": false,
+      "suppressionReason": null
+    },
+    {
+      "ruleId": "SEC-RDS-002",
+      "ruleVersion": "1",
+      "resourceId": "aws_db_instance.orders",
+      "pillar": "SECURITY",
+      "severity": "CRITICAL",
+      "outcome": "FAIL",
+      "message": "RDS must explicitly disable public access",
+      "recommendation": "Configure PubliclyAccessible to satisfy this policy; use a dated exception when justified.",
+      "classification": "NEW",
+      "suppressed": false,
+      "suppressionReason": null
+    }
+  ],
+  "resolvedFindings": [],
+  "changes": [
+    {
+      "resourceId": "aws_db_instance.orders",
+      "resourceType": "AWS::RDS::DBInstance",
+      "action": "MODIFY",
+      "risk": "RISK_INCREASE",
+      "changedProperties": [
+        "MultiAZ",
+        "PubliclyAccessible"
+      ]
+    }
+  ],
+  "gateReasons": [
+    "Gate score 70 is below 80",
+    "Disallowed finding severity"
+  ],
+  "resources": 1,
+  "evaluations": 8,
+  "unsupportedResourceTypes": [],
+  "unknownChecks": 0,
+  "ruleErrors": 0,
+  "gateScore": 70
+}

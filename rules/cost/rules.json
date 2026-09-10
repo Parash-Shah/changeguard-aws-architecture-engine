@@ -1,0 +1,70 @@
+[
+  {
+    "id": "COST-S3-001",
+    "version": "1",
+    "title": "S3 should declare lifecycle rules",
+    "pillar": "COST_OPTIMIZATION",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::S3::Bucket"
+    ],
+    "property": "LifecycleConfiguration.Rules",
+    "operator": "PRESENT",
+    "expected": null,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure LifecycleConfiguration.Rules to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-s3-bucket.html",
+    "heuristic": true
+  },
+  {
+    "id": "COST-LOG-001",
+    "version": "1",
+    "title": "Log retention should not exceed 90 days without review",
+    "pillar": "COST_OPTIMIZATION",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::Logs::LogGroup"
+    ],
+    "property": "RetentionInDays",
+    "operator": "LTE",
+    "expected": 90,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure RetentionInDays to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-logs-loggroup.html",
+    "heuristic": true
+  },
+  {
+    "id": "COST-LAMBDA-001",
+    "version": "1",
+    "title": "Lambda memory over 4096 MB requires sizing review",
+    "pillar": "COST_OPTIMIZATION",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::Lambda::Function"
+    ],
+    "property": "MemorySize",
+    "operator": "LTE",
+    "expected": 4096,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure MemorySize to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-lambda-function.html",
+    "heuristic": true
+  },
+  {
+    "id": "COST-RDS-001",
+    "version": "1",
+    "title": "RDS provisioned storage over 1024 GB requires sizing review",
+    "pillar": "COST_OPTIMIZATION",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::RDS::DBInstance"
+    ],
+    "property": "AllocatedStorage",
+    "operator": "LTE",
+    "expected": 1024,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure AllocatedStorage to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-rds-dbinstance.html",
+    "heuristic": true
+  }
+]

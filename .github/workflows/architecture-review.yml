@@ -1,0 +1,24 @@
+name: Architecture Review
+on:
+  pull_request:
+    paths: ['fixtures/**', 'rules/**', 'src/**', 'scripts/scan.py', '.github/workflows/architecture-review.yml']
+permissions:
+  contents: read
+jobs:
+  architecture-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose up -d --build --wait
+      - name: Review architecture fixture
+        run: python3 scripts/scan.py fixtures/good/production.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: architecture-report
+          path: reports/
+      - if: always()
+        run: docker compose down
+# The job itself is the PR status check. Configure it as a required branch check.
+# For a workload repository, replace the fixture with its generated template/plan,
+# and pass --baseline or --baseline-review-id for a trusted main-branch baseline.

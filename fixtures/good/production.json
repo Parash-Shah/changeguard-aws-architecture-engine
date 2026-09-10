@@ -1,0 +1,22 @@
+{
+  "Resources": {
+    "OrdersDatabase": {"Type":"AWS::RDS::DBInstance","Properties":{"StorageEncrypted":true,"PubliclyAccessible":false,"MultiAZ":true,"BackupRetentionPeriod":7,"DeletionProtection":true,"EnableCloudwatchLogsExports":["postgresql"],"EnablePerformanceInsights":true,"AllocatedStorage":100}},
+    "Assets": {"Type":"AWS::S3::Bucket","Properties":{"PublicAccessBlockConfiguration":{"BlockPublicAcls":true,"IgnorePublicAcls":true,"BlockPublicPolicy":true,"RestrictPublicBuckets":true},"VersioningConfiguration":{"Status":"Enabled"},"LifecycleConfiguration":{"Rules":[{"Status":"Enabled","ExpirationInDays":90}]}}},
+    "Reader": {"Type":"AWS::IAM::Policy","Properties":{"PolicyDocument":{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:GetObject","Resource":"arn:aws:s3:::example/orders/*"}]}}},
+    "WorkerRole": {"Type":"AWS::IAM::Role","Properties":{"Policies":[{"PolicyName":"reader","PolicyDocument":{"Statement":[{"Effect":"Allow","Action":"sqs:ReceiveMessage","Resource":"arn:aws:sqs:us-east-1:123456789012:orders"}]}}]}},
+    "PrivateGroup": {"Type":"AWS::EC2::SecurityGroup","Properties":{"SecurityGroupIngress":[{"IpProtocol":"tcp","FromPort":5432,"ToPort":5432,"CidrIp":"10.0.0.0/16"}]}},
+    "DataVolume": {"Type":"AWS::EC2::Volume","Properties":{"Encrypted":true,"VolumeType":"gp3"}},
+    "Queue": {"Type":"AWS::SQS::Queue","Properties":{"SqsManagedSseEnabled":true,"RedrivePolicy":{"deadLetterTargetArn":"arn:aws:sqs:us-east-1:123456789012:dead","maxReceiveCount":3}}},
+    "Topic": {"Type":"AWS::SNS::Topic","Properties":{"KmsMasterKeyId":"alias/aws/sns"}},
+    "Cache": {"Type":"AWS::ElastiCache::ReplicationGroup","Properties":{"TransitEncryptionEnabled":true,"AtRestEncryptionEnabled":true,"AutomaticFailoverEnabled":true}},
+    "AuditTrail": {"Type":"AWS::CloudTrail::Trail","Properties":{"EnableLogFileValidation":true,"IsLogging":true,"IsMultiRegionTrail":true}},
+    "Orders": {"Type":"AWS::DynamoDB::Table","Properties":{"PointInTimeRecoverySpecification":{"PointInTimeRecoveryEnabled":true},"DeletionProtectionEnabled":true}},
+    "Workers": {"Type":"AWS::AutoScaling::AutoScalingGroup","Properties":{"MinSize":2,"MaxSize":4}},
+    "Service": {"Type":"AWS::ECS::Service","Properties":{"DesiredCount":2,"DeploymentConfiguration":{"DeploymentCircuitBreaker":{"Enable":true,"Rollback":true}},"CapacityProviderStrategy":[{"CapacityProvider":"FARGATE_SPOT","Weight":1}]}},
+    "Logs": {"Type":"AWS::Logs::LogGroup","Properties":{"RetentionInDays":30}},
+    "Instance": {"Type":"AWS::EC2::Instance","Properties":{"Monitoring":true,"Tags":[{"Key":"Owner","Value":"orders"}]}},
+    "Alarm": {"Type":"AWS::CloudWatch::Alarm","Properties":{"AlarmActions":["arn:aws:sns:us-east-1:123456789012:alerts"]}},
+    "Function": {"Type":"AWS::Lambda::Function","Properties":{"Timeout":30,"MemorySize":512,"Architectures":["arm64"]}},
+    "Images": {"Type":"AWS::ECR::Repository","Properties":{"LifecyclePolicy":{"LifecyclePolicyText":"{\"rules\":[{\"rulePriority\":1,\"selection\":{\"tagStatus\":\"untagged\",\"countType\":\"imageCountMoreThan\",\"countNumber\":10},\"action\":{\"type\":\"expire\"}}]}"}}}
+  }
+}

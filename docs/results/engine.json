@@ -1,0 +1,59 @@
+{
+  "processors" : 8,
+  "os" : "Windows 11",
+  "java" : "21.0.12.1",
+  "scope" : "Synthetic in-process predicate benchmark; warm counts include cache hits; not API latency",
+  "results" : [ {
+    "threads" : 1,
+    "resources" : 5000,
+    "applicableChecks" : 500000,
+    "samplesPerMode" : 5,
+    "coldP50Ms" : 2005.6377,
+    "coldP95Ms" : 2731.863199,
+    "warmP50Ms" : 765.5377,
+    "warmP95Ms" : 1057.885001,
+    "coldChecksPerSecond" : 249297.26839498483,
+    "maxObservedHeapBytes" : 263038400,
+    "coldSamplesMs" : [ 1351.482799, 1784.238301, 2731.863199, 2167.5275, 2005.6377 ],
+    "warmSamplesMs" : [ 485.0674, 767.5513, 1057.885001, 765.5377, 545.420201 ]
+  }, {
+    "threads" : 4,
+    "resources" : 5000,
+    "applicableChecks" : 500000,
+    "samplesPerMode" : 5,
+    "coldP50Ms" : 897.783899,
+    "coldP95Ms" : 1038.7172,
+    "warmP50Ms" : 267.651801,
+    "warmP95Ms" : 550.509701,
+    "coldChecksPerSecond" : 556926.8958342057,
+    "maxObservedHeapBytes" : 271200008,
+    "coldSamplesMs" : [ 1038.7172, 897.783899, 598.439299, 932.798401, 805.925899 ],
+    "warmSamplesMs" : [ 550.509701, 273.101801, 192.953101, 245.4554, 267.651801 ]
+  }, {
+    "threads" : 8,
+    "resources" : 5000,
+    "applicableChecks" : 500000,
+    "samplesPerMode" : 5,
+    "coldP50Ms" : 705.7258,
+    "coldP95Ms" : 998.3624,
+    "warmP50Ms" : 233.2215,
+    "warmP95Ms" : 345.5941,
+    "coldChecksPerSecond" : 708490.4647102316,
+    "maxObservedHeapBytes" : 330511256,
+    "coldSamplesMs" : [ 586.4151, 705.7258, 998.3624, 746.621, 655.2014 ],
+    "warmSamplesMs" : [ 233.2215, 223.3954, 345.5941, 262.5266, 190.4156 ]
+  }, {
+    "threads" : 16,
+    "resources" : 5000,
+    "applicableChecks" : 500000,
+    "samplesPerMode" : 5,
+    "coldP50Ms" : 785.947599,
+    "coldP95Ms" : 851.2571,
+    "warmP50Ms" : 207.131401,
+    "warmP95Ms" : 299.890301,
+    "coldChecksPerSecond" : 636174.727979543,
+    "maxObservedHeapBytes" : 276318144,
+    "coldSamplesMs" : [ 753.557, 851.2571, 785.947599, 795.5367, 623.476 ],
+    "warmSamplesMs" : [ 228.212599, 202.5885, 207.131401, 299.890301, 154.237701 ]
+  } ]
+}

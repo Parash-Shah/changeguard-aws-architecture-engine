@@ -1,0 +1,70 @@
+[
+  {
+    "id": "SUS-LAMBDA-001",
+    "version": "1",
+    "title": "Lambda should consider ARM64",
+    "pillar": "SUSTAINABILITY",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::Lambda::Function"
+    ],
+    "property": "Architectures",
+    "operator": "CONTAINS",
+    "expected": "arm64",
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure Architectures to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-lambda-function.html",
+    "heuristic": true
+  },
+  {
+    "id": "SUS-ECR-001",
+    "version": "1",
+    "title": "ECR should expire unused images with a lifecycle policy",
+    "pillar": "SUSTAINABILITY",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::ECR::Repository"
+    ],
+    "property": "LifecyclePolicy.LifecyclePolicyText",
+    "operator": "PRESENT",
+    "expected": null,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure LifecyclePolicy.LifecyclePolicyText to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ecr-repository.html",
+    "heuristic": true
+  },
+  {
+    "id": "SUS-S3-001",
+    "version": "1",
+    "title": "S3 should configure expiration of obsolete data",
+    "pillar": "SUSTAINABILITY",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::S3::Bucket"
+    ],
+    "property": "LifecycleConfiguration.Rules",
+    "operator": "PRESENT",
+    "expected": null,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure LifecycleConfiguration.Rules to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-s3-bucket.html",
+    "heuristic": true
+  },
+  {
+    "id": "SUS-ECS-001",
+    "version": "1",
+    "title": "ECS should declare capacity provider strategy",
+    "pillar": "SUSTAINABILITY",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::ECS::Service"
+    ],
+    "property": "CapacityProviderStrategy",
+    "operator": "PRESENT",
+    "expected": null,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure CapacityProviderStrategy to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ecs-service.html",
+    "heuristic": true
+  }
+]

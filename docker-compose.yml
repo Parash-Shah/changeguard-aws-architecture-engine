@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: changeguard
+      POSTGRES_USER: changeguard
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-changeguard}
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U changeguard -d changeguard"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+  api:
+    image: changeguard:local
+    build: .
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/changeguard
+      DATABASE_USER: changeguard
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-changeguard}
+      CHANGEGUARD_API_KEY: ${CHANGEGUARD_API_KEY:-}
+    ports: ["127.0.0.1:8080:8080"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:8080/actuator/health >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 15
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    profiles: [observability]
+    volumes: ["./dashboards/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["127.0.0.1:9090:9090"]
+    depends_on: [api]
+  grafana:
+    image: grafana/grafana:12.1.1
+    profiles: [observability]
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-changeguard-local}
+    volumes:
+      - ./dashboards/provisioning:/etc/grafana/provisioning:ro
+      - ./dashboards/changeguard.json:/var/lib/grafana/dashboards/changeguard.json:ro
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on: [prometheus]
+volumes:
+  postgres-data:

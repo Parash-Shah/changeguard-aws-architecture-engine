@@ -1,0 +1,172 @@
+[
+  {
+    "id": "REL-RDS-001",
+    "version": "1",
+    "title": "Production RDS should use Multi-AZ",
+    "pillar": "RELIABILITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::RDS::DBInstance"
+    ],
+    "property": "MultiAZ",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure MultiAZ to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-rds-dbinstance.html",
+    "heuristic": false
+  },
+  {
+    "id": "REL-RDS-002",
+    "version": "1",
+    "title": "RDS should retain backups for at least seven days",
+    "pillar": "RELIABILITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::RDS::DBInstance"
+    ],
+    "property": "BackupRetentionPeriod",
+    "operator": "GTE",
+    "expected": 7,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure BackupRetentionPeriod to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-rds-dbinstance.html",
+    "heuristic": false
+  },
+  {
+    "id": "REL-RDS-003",
+    "version": "1",
+    "title": "RDS should enable deletion protection",
+    "pillar": "RELIABILITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::RDS::DBInstance"
+    ],
+    "property": "DeletionProtection",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure DeletionProtection to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-rds-dbinstance.html",
+    "heuristic": false
+  },
+  {
+    "id": "REL-S3-001",
+    "version": "1",
+    "title": "S3 should enable versioning",
+    "pillar": "RELIABILITY",
+    "severity": "MEDIUM",
+    "resourceTypes": [
+      "AWS::S3::Bucket"
+    ],
+    "property": "VersioningConfiguration.Status",
+    "operator": "EQUALS",
+    "expected": "Enabled",
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure VersioningConfiguration.Status to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-s3-bucket.html",
+    "heuristic": false
+  },
+  {
+    "id": "REL-SQS-001",
+    "version": "1",
+    "title": "SQS should configure a dead-letter queue",
+    "pillar": "RELIABILITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::SQS::Queue"
+    ],
+    "property": "RedrivePolicy",
+    "operator": "PRESENT",
+    "expected": null,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure RedrivePolicy to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-sqs-queue.html",
+    "heuristic": false
+  },
+  {
+    "id": "REL-DDB-001",
+    "version": "1",
+    "title": "DynamoDB should enable point-in-time recovery",
+    "pillar": "RELIABILITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::DynamoDB::Table"
+    ],
+    "property": "PointInTimeRecoverySpecification.PointInTimeRecoveryEnabled",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure PointInTimeRecoverySpecification.PointInTimeRecoveryEnabled to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-dynamodb-table.html",
+    "heuristic": false
+  },
+  {
+    "id": "REL-DDB-002",
+    "version": "1",
+    "title": "DynamoDB should enable deletion protection",
+    "pillar": "RELIABILITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::DynamoDB::Table"
+    ],
+    "property": "DeletionProtectionEnabled",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure DeletionProtectionEnabled to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-dynamodb-table.html",
+    "heuristic": false
+  },
+  {
+    "id": "REL-ASG-001",
+    "version": "1",
+    "title": "Auto Scaling should maintain at least two instances",
+    "pillar": "RELIABILITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::AutoScaling::AutoScalingGroup"
+    ],
+    "property": "MinSize",
+    "operator": "GTE",
+    "expected": 2,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure MinSize to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-autoscaling-autoscalinggroup.html",
+    "heuristic": true
+  },
+  {
+    "id": "REL-ECS-001",
+    "version": "1",
+    "title": "ECS should maintain at least two tasks",
+    "pillar": "RELIABILITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::ECS::Service"
+    ],
+    "property": "DesiredCount",
+    "operator": "GTE",
+    "expected": 2,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure DesiredCount to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ecs-service.html",
+    "heuristic": true
+  },
+  {
+    "id": "REL-CACHE-001",
+    "version": "1",
+    "title": "ElastiCache should enable automatic failover",
+    "pillar": "RELIABILITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::ElastiCache::ReplicationGroup"
+    ],
+    "property": "AutomaticFailoverEnabled",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure AutomaticFailoverEnabled to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-elasticache-replicationgroup.html",
+    "heuristic": false
+  }
+]

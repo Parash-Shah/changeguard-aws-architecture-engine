@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: changeguard
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: [api:8080]
+# If CHANGEGUARD_API_KEY is set, configure http_headers.X-API-Key.values here
+# through a private mounted configuration. Do not commit the key.

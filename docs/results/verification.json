@@ -1,0 +1,12 @@
+{
+  "tests": 188,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "date": "2026-09-10",
+  "java": "21.0.12.1",
+  "mavenVerify": "passed",
+  "dockerBuild": "passed",
+  "terraformValidate": "passed in Linux Docker",
+  "liveAwsTested": false
+}

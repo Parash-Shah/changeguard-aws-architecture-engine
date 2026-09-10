@@ -1,0 +1,211 @@
+[
+  {
+    "id": "SEC-RDS-001",
+    "version": "1",
+    "title": "RDS storage must be explicitly encrypted",
+    "pillar": "SECURITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::RDS::DBInstance"
+    ],
+    "property": "StorageEncrypted",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure StorageEncrypted to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-rds-dbinstance.html",
+    "heuristic": false
+  },
+  {
+    "id": "SEC-RDS-002",
+    "version": "1",
+    "title": "RDS must explicitly disable public access",
+    "pillar": "SECURITY",
+    "severity": "CRITICAL",
+    "resourceTypes": [
+      "AWS::RDS::DBInstance"
+    ],
+    "property": "PubliclyAccessible",
+    "operator": "EQUALS",
+    "expected": false,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure PubliclyAccessible to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-rds-dbinstance.html",
+    "heuristic": false
+  },
+  {
+    "id": "SEC-S3-001",
+    "version": "1",
+    "title": "S3 must block all public access",
+    "pillar": "SECURITY",
+    "severity": "CRITICAL",
+    "resourceTypes": [
+      "AWS::S3::Bucket"
+    ],
+    "property": "PublicAccessBlockConfiguration",
+    "operator": "ALL_TRUE",
+    "expected": [
+      "BlockPublicAcls",
+      "IgnorePublicAcls",
+      "BlockPublicPolicy",
+      "RestrictPublicBuckets"
+    ],
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure PublicAccessBlockConfiguration to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-s3-bucket.html",
+    "heuristic": false
+  },
+  {
+    "id": "SEC-IAM-001",
+    "version": "1",
+    "title": "IAM policy must avoid wildcard administrative grants",
+    "pillar": "SECURITY",
+    "severity": "CRITICAL",
+    "resourceTypes": [
+      "AWS::IAM::Policy"
+    ],
+    "property": "PolicyDocument",
+    "operator": "NO_ADMIN",
+    "expected": null,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure PolicyDocument to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-policy.html",
+    "heuristic": false
+  },
+  {
+    "id": "SEC-IAM-002",
+    "version": "1",
+    "title": "IAM role inline policies must avoid wildcard grants",
+    "pillar": "SECURITY",
+    "severity": "CRITICAL",
+    "resourceTypes": [
+      "AWS::IAM::Role"
+    ],
+    "property": "Policies",
+    "operator": "NO_ADMIN",
+    "expected": null,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure Policies to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-role.html",
+    "heuristic": false
+  },
+  {
+    "id": "SEC-EC2-001",
+    "version": "1",
+    "title": "Security group must restrict public administrative ingress",
+    "pillar": "SECURITY",
+    "severity": "CRITICAL",
+    "resourceTypes": [
+      "AWS::EC2::SecurityGroup"
+    ],
+    "property": "SecurityGroupIngress",
+    "operator": "NO_PUBLIC_INGRESS",
+    "expected": null,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure SecurityGroupIngress to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ec2-securitygroup.html",
+    "heuristic": false
+  },
+  {
+    "id": "SEC-EBS-001",
+    "version": "1",
+    "title": "EBS must be explicitly encrypted",
+    "pillar": "SECURITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::EC2::Volume"
+    ],
+    "property": "Encrypted",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure Encrypted to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ec2-volume.html",
+    "heuristic": false
+  },
+  {
+    "id": "SEC-SQS-001",
+    "version": "1",
+    "title": "SQS must explicitly enable managed SSE",
+    "pillar": "SECURITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::SQS::Queue"
+    ],
+    "property": "SqsManagedSseEnabled",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure SqsManagedSseEnabled to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-sqs-queue.html",
+    "heuristic": false
+  },
+  {
+    "id": "SEC-SNS-001",
+    "version": "1",
+    "title": "SNS must specify an encryption key",
+    "pillar": "SECURITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::SNS::Topic"
+    ],
+    "property": "KmsMasterKeyId",
+    "operator": "PRESENT",
+    "expected": null,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure KmsMasterKeyId to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-sns-topic.html",
+    "heuristic": false
+  },
+  {
+    "id": "SEC-CACHE-001",
+    "version": "1",
+    "title": "ElastiCache must encrypt traffic",
+    "pillar": "SECURITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::ElastiCache::ReplicationGroup"
+    ],
+    "property": "TransitEncryptionEnabled",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure TransitEncryptionEnabled to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-elasticache-replicationgroup.html",
+    "heuristic": false
+  },
+  {
+    "id": "SEC-CACHE-002",
+    "version": "1",
+    "title": "ElastiCache must encrypt storage",
+    "pillar": "SECURITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::ElastiCache::ReplicationGroup"
+    ],
+    "property": "AtRestEncryptionEnabled",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure AtRestEncryptionEnabled to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-elasticache-replicationgroup.html",
+    "heuristic": false
+  },
+  {
+    "id": "SEC-TRAIL-001",
+    "version": "1",
+    "title": "CloudTrail must validate log files",
+    "pillar": "SECURITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::CloudTrail::Trail"
+    ],
+    "property": "EnableLogFileValidation",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure EnableLogFileValidation to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-cloudtrail-trail.html",
+    "heuristic": false
+  }
+]

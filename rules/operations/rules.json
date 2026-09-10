@@ -1,0 +1,138 @@
+[
+  {
+    "id": "OPS-RDS-001",
+    "version": "1",
+    "title": "RDS should export database logs",
+    "pillar": "OPERATIONAL_EXCELLENCE",
+    "severity": "MEDIUM",
+    "resourceTypes": [
+      "AWS::RDS::DBInstance"
+    ],
+    "property": "EnableCloudwatchLogsExports",
+    "operator": "PRESENT",
+    "expected": null,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure EnableCloudwatchLogsExports to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-rds-dbinstance.html",
+    "heuristic": false
+  },
+  {
+    "id": "OPS-LOG-001",
+    "version": "1",
+    "title": "Log groups should set retention",
+    "pillar": "OPERATIONAL_EXCELLENCE",
+    "severity": "MEDIUM",
+    "resourceTypes": [
+      "AWS::Logs::LogGroup"
+    ],
+    "property": "RetentionInDays",
+    "operator": "GTE",
+    "expected": 1,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure RetentionInDays to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-logs-loggroup.html",
+    "heuristic": false
+  },
+  {
+    "id": "OPS-TRAIL-001",
+    "version": "1",
+    "title": "CloudTrail should be logging",
+    "pillar": "OPERATIONAL_EXCELLENCE",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "AWS::CloudTrail::Trail"
+    ],
+    "property": "IsLogging",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure IsLogging to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-cloudtrail-trail.html",
+    "heuristic": false
+  },
+  {
+    "id": "OPS-TRAIL-002",
+    "version": "1",
+    "title": "CloudTrail should cover all regions",
+    "pillar": "OPERATIONAL_EXCELLENCE",
+    "severity": "MEDIUM",
+    "resourceTypes": [
+      "AWS::CloudTrail::Trail"
+    ],
+    "property": "IsMultiRegionTrail",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure IsMultiRegionTrail to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-cloudtrail-trail.html",
+    "heuristic": false
+  },
+  {
+    "id": "OPS-EC2-001",
+    "version": "1",
+    "title": "EC2 should enable detailed monitoring",
+    "pillar": "OPERATIONAL_EXCELLENCE",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::EC2::Instance"
+    ],
+    "property": "Monitoring",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure Monitoring to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ec2-instance.html",
+    "heuristic": true
+  },
+  {
+    "id": "OPS-EC2-002",
+    "version": "1",
+    "title": "EC2 should carry ownership tags",
+    "pillar": "OPERATIONAL_EXCELLENCE",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::EC2::Instance"
+    ],
+    "property": "Tags",
+    "operator": "PRESENT",
+    "expected": null,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure Tags to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ec2-instance.html",
+    "heuristic": true
+  },
+  {
+    "id": "OPS-ECS-001",
+    "version": "1",
+    "title": "ECS should enable deployment rollback",
+    "pillar": "OPERATIONAL_EXCELLENCE",
+    "severity": "MEDIUM",
+    "resourceTypes": [
+      "AWS::ECS::Service"
+    ],
+    "property": "DeploymentConfiguration.DeploymentCircuitBreaker.Rollback",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure DeploymentConfiguration.DeploymentCircuitBreaker.Rollback to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ecs-service.html",
+    "heuristic": false
+  },
+  {
+    "id": "OPS-ALARM-001",
+    "version": "1",
+    "title": "CloudWatch alarm should have notification actions",
+    "pillar": "OPERATIONAL_EXCELLENCE",
+    "severity": "MEDIUM",
+    "resourceTypes": [
+      "AWS::CloudWatch::Alarm"
+    ],
+    "property": "AlarmActions",
+    "operator": "PRESENT",
+    "expected": null,
+    "rationale": "Require explicit infrastructure evidence of this architecture control.",
+    "recommendation": "Configure AlarmActions to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-cloudwatch-alarm.html",
+    "heuristic": false
+  }
+]

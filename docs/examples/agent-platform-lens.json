@@ -1,0 +1,104 @@
+[
+  {
+    "id": "ORG-AGENT-001",
+    "version": "1",
+    "title": "Agent workloads must declare a budget",
+    "pillar": "COST_OPTIMIZATION",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "ChangeGuard::Agent::Workload"
+    ],
+    "property": "BudgetLimit",
+    "operator": "GTE",
+    "expected": 1,
+    "rationale": "Organization-defined agent platform governance; explicit metadata supplied by the workload owner.",
+    "recommendation": "Declare and enforce BudgetLimit in the runtime platform.",
+    "documentation": "https://docs.aws.amazon.com/wellarchitected/latest/userguide/lenses-custom.html",
+    "heuristic": true
+  },
+  {
+    "id": "ORG-AGENT-002",
+    "version": "1",
+    "title": "Agent tools must use least privilege",
+    "pillar": "SECURITY",
+    "severity": "CRITICAL",
+    "resourceTypes": [
+      "ChangeGuard::Agent::Workload"
+    ],
+    "property": "LeastPrivilege",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Organization-defined agent platform governance; explicit metadata supplied by the workload owner.",
+    "recommendation": "Declare and enforce LeastPrivilege in the runtime platform.",
+    "documentation": "https://docs.aws.amazon.com/wellarchitected/latest/userguide/lenses-custom.html",
+    "heuristic": true
+  },
+  {
+    "id": "ORG-AGENT-003",
+    "version": "1",
+    "title": "Production remediation must require approval",
+    "pillar": "OPERATIONAL_EXCELLENCE",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "ChangeGuard::Agent::Workload"
+    ],
+    "property": "RemediationApprovalRequired",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Organization-defined agent platform governance; explicit metadata supplied by the workload owner.",
+    "recommendation": "Declare and enforce RemediationApprovalRequired in the runtime platform.",
+    "documentation": "https://docs.aws.amazon.com/wellarchitected/latest/userguide/lenses-custom.html",
+    "heuristic": true
+  },
+  {
+    "id": "ORG-AGENT-004",
+    "version": "1",
+    "title": "Agent execution must have an audit trail",
+    "pillar": "OPERATIONAL_EXCELLENCE",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "ChangeGuard::Agent::Workload"
+    ],
+    "property": "AuditTrailEnabled",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Organization-defined agent platform governance; explicit metadata supplied by the workload owner.",
+    "recommendation": "Declare and enforce AuditTrailEnabled in the runtime platform.",
+    "documentation": "https://docs.aws.amazon.com/wellarchitected/latest/userguide/lenses-custom.html",
+    "heuristic": true
+  },
+  {
+    "id": "ORG-AGENT-005",
+    "version": "1",
+    "title": "Model calls must have bounded timeouts",
+    "pillar": "RELIABILITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "ChangeGuard::Agent::Workload"
+    ],
+    "property": "ModelTimeoutSeconds",
+    "operator": "LTE",
+    "expected": 120,
+    "rationale": "Organization-defined agent platform governance; explicit metadata supplied by the workload owner.",
+    "recommendation": "Declare and enforce ModelTimeoutSeconds in the runtime platform.",
+    "documentation": "https://docs.aws.amazon.com/wellarchitected/latest/userguide/lenses-custom.html",
+    "heuristic": true
+  },
+  {
+    "id": "ORG-AGENT-006",
+    "version": "1",
+    "title": "Agent loops must have a maximum step count",
+    "pillar": "RELIABILITY",
+    "severity": "HIGH",
+    "resourceTypes": [
+      "ChangeGuard::Agent::Workload"
+    ],
+    "property": "MaximumSteps",
+    "operator": "LTE",
+    "expected": 100,
+    "rationale": "Organization-defined agent platform governance; explicit metadata supplied by the workload owner.",
+    "recommendation": "Declare and enforce MaximumSteps in the runtime platform.",
+    "documentation": "https://docs.aws.amazon.com/wellarchitected/latest/userguide/lenses-custom.html",
+    "heuristic": true
+  }
+]

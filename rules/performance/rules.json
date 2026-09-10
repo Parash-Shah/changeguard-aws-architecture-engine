@@ -1,0 +1,73 @@
+[
+  {
+    "id": "PERF-LAMBDA-001",
+    "version": "1",
+    "title": "Lambda should declare a bounded timeout",
+    "pillar": "PERFORMANCE_EFFICIENCY",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::Lambda::Function"
+    ],
+    "property": "Timeout",
+    "operator": "LTE",
+    "expected": 60,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure Timeout to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-lambda-function.html",
+    "heuristic": true
+  },
+  {
+    "id": "PERF-ASG-001",
+    "version": "1",
+    "title": "Auto Scaling should allow at least two instances",
+    "pillar": "PERFORMANCE_EFFICIENCY",
+    "severity": "MEDIUM",
+    "resourceTypes": [
+      "AWS::AutoScaling::AutoScalingGroup"
+    ],
+    "property": "MaxSize",
+    "operator": "GTE",
+    "expected": 2,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure MaxSize to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-autoscaling-autoscalinggroup.html",
+    "heuristic": true
+  },
+  {
+    "id": "PERF-EBS-001",
+    "version": "1",
+    "title": "EBS should use a current SSD volume type",
+    "pillar": "PERFORMANCE_EFFICIENCY",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::EC2::Volume"
+    ],
+    "property": "VolumeType",
+    "operator": "IN",
+    "expected": [
+      "gp3",
+      "io2"
+    ],
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure VolumeType to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ec2-volume.html",
+    "heuristic": true
+  },
+  {
+    "id": "PERF-RDS-001",
+    "version": "1",
+    "title": "RDS should enable performance insights",
+    "pillar": "PERFORMANCE_EFFICIENCY",
+    "severity": "LOW",
+    "resourceTypes": [
+      "AWS::RDS::DBInstance"
+    ],
+    "property": "EnablePerformanceInsights",
+    "operator": "EQUALS",
+    "expected": true,
+    "rationale": "Organization policy heuristic; validate against workload needs.",
+    "recommendation": "Configure EnablePerformanceInsights to satisfy this policy; use a dated exception when justified.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-rds-dbinstance.html",
+    "heuristic": true
+  }
+]

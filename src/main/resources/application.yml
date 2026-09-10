@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: changeguard
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/changeguard}
+    username: ${DATABASE_USER:changeguard}
+    password: ${DATABASE_PASSWORD:changeguard}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+server:
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  error:
+    include-message: never
+management:
+  metrics:
+    distribution:
+      percentiles-histogram:
+        review_latency: true
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+changeguard:
+  parallelism: ${EVALUATION_THREADS:1}
+  cache-size: 50000
+  rules-location: ${RULES_LOCATION:classpath*:rules/**/*.json}
+  api-key: ${CHANGEGUARD_API_KEY:}
+  aws:
+    enabled: ${AWS_INTEGRATION_ENABLED:false}
+    region: ${AWS_REGION:us-east-1}
