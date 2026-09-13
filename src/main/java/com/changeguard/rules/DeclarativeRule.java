@@ -20,11 +20,18 @@ public record DeclarativeRule(RuleDefinition definition) implements Architecture
                     && (!(value instanceof Map<?, ?> m) || !m.isEmpty()) && !"".equals(value);
             case GTE -> numeric(value) != null && numeric(value) >= ((Number) definition.expected()).doubleValue();
             case LTE -> numeric(value) != null && numeric(value) <= ((Number) definition.expected()).doubleValue();
+            case BETWEEN -> numeric(value) != null
+                    && numeric(value) >= ((Number) ((List<?>) definition.expected()).get(0)).doubleValue()
+                    && numeric(value) <= ((Number) ((List<?>) definition.expected()).get(1)).doubleValue();
             case IN -> ((List<?>) definition.expected()).contains(value);
             case CONTAINS -> value instanceof Collection<?> c && c.contains(definition.expected());
             case ALL_TRUE -> value instanceof Map<?, ?> m && ((List<?>) definition.expected()).stream().allMatch(k -> Boolean.TRUE.equals(m.get(k)));
             case NO_ADMIN -> value != null && !admin(value);
             case NO_PUBLIC_INGRESS -> value != null && !publicIngress(value);
+            case S3_ENCRYPTED -> value instanceof List<?> configurations && !configurations.isEmpty()
+                    && configurations.stream().allMatch(c -> c instanceof Map<?,?> configuration
+                        && configuration.get("ServerSideEncryptionByDefault") instanceof Map<?,?> defaults
+                        && Set.of("AES256", "aws:kms", "aws:kms:dsse").contains(String.valueOf(defaults.get("SSEAlgorithm"))));
         };
         return result(passed ? PASS : FAIL, passed ? "Policy satisfied" : definition.title());
     }
@@ -56,11 +63,15 @@ public record DeclarativeRule(RuleDefinition definition) implements Architecture
     private static boolean publicIngress(Object value) {
         if (value instanceof Map<?, ?> m) {
             if (publicCidr(m.get("CidrIp")) || publicCidr(m.get("CidrIpv6"))) {
-                Object from = m.get("FromPort"), to = m.get("ToPort");
-                if ("-1".equals(String.valueOf(m.get("IpProtocol")))) return true;
-                if (from instanceof Number f && to instanceof Number t)
+                String protocol = String.valueOf(m.get("IpProtocol"));
+                if ("-1".equals(protocol)) return true;
+                // ICMP type/code values are not TCP or UDP ports.
+                if (Set.of("icmp", "icmpv6", "1", "58").contains(protocol)) return false;
+                Double from = numeric(m.get("FromPort")), to = numeric(m.get("ToPort"));
+                if (from == null || to == null || from < 0 || to > 65535 || from > to
+                        || from != Math.rint(from) || to != Math.rint(to)) return true;
                     for (int port : new int[]{22, 3389, 3306, 5432, 1433, 27017, 6379})
-                        if (f.intValue() <= port && t.intValue() >= port) return true;
+                        if (from <= port && to >= port) return true;
             }
             return m.values().stream().anyMatch(DeclarativeRule::publicIngress);
         }

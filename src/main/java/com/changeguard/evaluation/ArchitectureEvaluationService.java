@@ -16,7 +16,7 @@ import static com.changeguard.rules.RuleResult.Outcome.*;
 import static com.changeguard.findings.Finding.Classification.*;
 
 @Service
-public class ArchitectureEvaluationService {
+public class ArchitectureEvaluationService implements AutoCloseable {
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(ArchitectureEvaluationService.class);
     private final List<ArchitectureRule> rules;
     private final ExecutorService executor;
@@ -46,8 +46,8 @@ public class ArchitectureEvaluationService {
         var timer = io.micrometer.core.instrument.Timer.start(metrics);
         try {
             validateResources(proposed); if (baseline != null) validateResources(baseline);
-            validateSuppressions(suppressions, proposed);
             List<Check> checks = checks(proposed);
+            validateSuppressions(suppressions, checks);
             Map<String, Finding> old = baseline == null ? Map.of() : checks(baseline).stream()
                     .filter(c -> c.result().outcome() == FAIL).map(Check::finding).collect(Collectors.toMap(Finding::key, f -> f));
             List<Finding> findings = new ArrayList<>(checks.stream().filter(c -> !c.result().passed()).map(Check::finding)
@@ -71,7 +71,8 @@ public class ArchitectureEvaluationService {
             int score = score(failures), gateScore = score(gated);
             long unknown = findings.stream().filter(f -> f.outcome() == UNKNOWN).count();
             long errors = findings.stream().filter(f -> f.outcome() == RULE_ERROR).count();
-            List<String> unsupported = proposed.stream().filter(r -> rules.stream().noneMatch(rule -> rule.supports(r)))
+            Set<String> assessedResources = checks.stream().map(c -> c.resource().resourceId()).collect(Collectors.toSet());
+            List<String> unsupported = proposed.stream().filter(r -> !assessedResources.contains(r.resourceId()))
                     .map(CloudResource::resourceType).distinct().sorted().toList();
             List<String> reasons = new ArrayList<>();
             if (gateScore < gate.minimumScore()) reasons.add("Gate score " + gateScore + " is below " + gate.minimumScore());
@@ -92,7 +93,8 @@ public class ArchitectureEvaluationService {
             }
             metrics.counter("changeguard_reviews", "status", status.name()).increment();
             for (Finding f : findings) {
-                metrics.counter("changeguard_findings", "pillar", f.pillar().name(), "severity", f.severity().name()).increment();
+                metrics.counter("changeguard_findings", "pillar", f.pillar().name(), "severity", f.severity().name(),
+                        "rule", f.ruleId(), "outcome", f.outcome().name(), "suppressed", Boolean.toString(f.suppressed())).increment();
                 if (f.severity() == Severity.CRITICAL && f.outcome() == FAIL) metrics.counter("changeguard_critical_findings").increment();
                 if (f.suppressed()) metrics.counter("suppressed_findings").increment();
                 if (f.classification() == NEW && f.outcome() == FAIL && baseline != null) metrics.counter("regressions_detected").increment();
@@ -111,9 +113,10 @@ public class ArchitectureEvaluationService {
     }
     private List<Check> checkResource(CloudResource resource) {
         List<Check> results = new ArrayList<>();
-        for (ArchitectureRule rule : rules) if (rule.supports(resource)) {
+        for (ArchitectureRule rule : rules) {
             RuleResult result;
             try {
+                if (!rule.supports(resource)) continue;
                 result = cache.get(new CacheKey(rule.definition(), resource), key -> {
                     var sample = io.micrometer.core.instrument.Timer.start(metrics);
                     try { return Objects.requireNonNull(rule.evaluate(resource)); }
@@ -128,14 +131,14 @@ public class ArchitectureEvaluationService {
         return results;
     }
     private static int score(List<Finding> findings) { return (int) Math.max(0L, 100L - findings.stream().mapToLong(f -> f.severity().penalty()).sum()); }
-    private void validateSuppressions(List<Suppression> suppressions, List<CloudResource> resources) {
+    private void validateSuppressions(List<Suppression> suppressions, List<Check> checks) {
         Set<String> keys = new HashSet<>();
         for (Suppression s : suppressions) {
             if (s.rule() == null || s.resource() == null || s.reason() == null || s.reason().isBlank() || s.expires() == null)
                 throw new IllegalArgumentException("Suppressions require rule, resource, reason and expiration");
             if (!s.expires().isAfter(LocalDate.now(clock))) throw new IllegalArgumentException("Suppression must expire after today (UTC)");
             if (!keys.add(s.rule() + "\u0000" + s.resource())) throw new IllegalArgumentException("Duplicate suppression");
-            if (rules.stream().noneMatch(r -> r.id().equals(s.rule()) && resources.stream().anyMatch(resource -> resource.resourceId().equals(s.resource()) && r.supports(resource))))
+            if (checks.stream().noneMatch(c -> c.rule().id().equals(s.rule()) && c.resource().resourceId().equals(s.resource())))
                 throw new IllegalArgumentException("Suppression must reference an applicable rule and resource");
         }
     }

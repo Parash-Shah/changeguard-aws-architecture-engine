@@ -38,3 +38,4 @@ target/
 .terraform/
 load-tests/results/
 reports/
+__pycache__/

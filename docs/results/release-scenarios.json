@@ -1,0 +1,9 @@
+{
+  "dataset" : "150 synthetic variations of 15 hand-authored mutations; not a production accuracy estimate",
+  "safeScenarios" : 60,
+  "unsafeScenarios" : 90,
+  "criticalScenarios" : 30,
+  "criticalBlocked" : 30,
+  "unsafeDetected" : 90,
+  "falsePositives" : 0
+}

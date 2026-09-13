@@ -1,0 +1,47 @@
+{
+  "liveAws" : true,
+  "recordedAt" : "2026-09-13T21:15:42.896139100Z",
+  "region" : "us-east-1",
+  "workloadId" : "b384e9fc79f94d32b19e7ced7549e946",
+  "lens" : "wellarchitected",
+  "lensVersion" : "2025-02-25",
+  "riskCounts" : {
+    "UNANSWERED" : 57,
+    "HIGH" : 0,
+    "MEDIUM" : 0,
+    "NONE" : 0,
+    "NOT_APPLICABLE" : 0
+  },
+  "existingMilestones" : [ 1 ],
+  "comparison" : {
+    "workloadId" : "b384e9fc79f94d32b19e7ced7549e946",
+    "lensAlias" : "wellarchitected",
+    "fromMilestone" : 1,
+    "toMilestone" : 2,
+    "fromLensVersion" : "2025-02-25",
+    "toLensVersion" : "2025-02-25",
+    "comparable" : true,
+    "before" : {
+      "UNANSWERED" : 57,
+      "NOT_APPLICABLE" : 0,
+      "NONE" : 0,
+      "MEDIUM" : 0,
+      "HIGH" : 0
+    },
+    "after" : {
+      "UNANSWERED" : 57,
+      "NOT_APPLICABLE" : 0,
+      "NONE" : 0,
+      "MEDIUM" : 0,
+      "HIGH" : 0
+    },
+    "delta" : {
+      "UNANSWERED" : 0,
+      "NOT_APPLICABLE" : 0,
+      "NONE" : 0,
+      "MEDIUM" : 0,
+      "HIGH" : 0
+    }
+  },
+  "milestoneRoundTrip" : true
+}

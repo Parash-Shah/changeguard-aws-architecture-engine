@@ -91,7 +91,7 @@
   },
   {
     "id": "SEC-EC2-001",
-    "version": "1",
+    "version": "2",
     "title": "Security group must restrict public administrative ingress",
     "pillar": "SECURITY",
     "severity": "CRITICAL",

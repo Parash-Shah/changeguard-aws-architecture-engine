@@ -6,6 +6,19 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.*;
 
 class ParserTest {
+    @Test void normalizesTerraformPerformanceInsights() throws Exception {
+        String plan = """
+            {"format_version":"1.2","resource_changes":[{"address":"aws_db_instance.orders","type":"aws_db_instance",
+             "change":{"actions":["create"],"before":null,"after":{"performance_insights_enabled":true}}}]}
+            """;
+        var resource = new TerraformPlanParser().parse(plan).getFirst();
+        var rule = TestSupport.catalog().rules().stream().filter(r -> r.id().equals("PERF-RDS-001")).findFirst().orElseThrow();
+        assertThat(rule.evaluate(resource).passed()).isTrue();
+        var root = TestSupport.MAPPER.readTree(plan);
+        ((com.fasterxml.jackson.databind.node.ObjectNode)root.path("resource_changes").get(0).path("change"))
+                .putObject("after_unknown").put("performance_insights_enabled", true);
+        assertThat(rule.evaluate(new TerraformPlanParser().parse(root.toString()).getFirst()).outcome()).isEqualTo(RuleResult.Outcome.UNKNOWN);
+    }
     private final CloudFormationParser cfn = new CloudFormationParser();
     private final TerraformPlanParser tf = new TerraformPlanParser();
     @Test void parsesAllFixtureTypesAndFreezesNestedValues() throws Exception {

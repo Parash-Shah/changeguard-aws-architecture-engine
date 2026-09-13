@@ -1,0 +1,9 @@
+{
+  "WorkloadName": "ChangeGuard architecture engine pilot",
+  "Description": "Preproduction review context for the ChangeGuard static infrastructure risk engine. No compute or database deployment.",
+  "Environment": "PREPRODUCTION",
+  "AwsRegions": ["us-east-1"],
+  "ReviewOwner": "Parash",
+  "Lenses": ["wellarchitected"],
+  "ClientRequestToken": "e46d711b-e7d5-4ddf-8354-548e9c3e6f49"
+}

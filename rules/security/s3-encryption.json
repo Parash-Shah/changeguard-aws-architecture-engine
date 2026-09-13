@@ -1,0 +1,17 @@
+[
+  {
+    "id": "SEC-S3-002",
+    "version": "1",
+    "title": "S3 should explicitly declare default encryption",
+    "pillar": "SECURITY",
+    "severity": "HIGH",
+    "resourceTypes": ["AWS::S3::Bucket"],
+    "property": "BucketEncryption.ServerSideEncryptionConfiguration",
+    "operator": "S3_ENCRYPTED",
+    "expected": null,
+    "rationale": "Keep the intended encryption algorithm under version control. Missing configuration does not imply that S3 service-default encryption is disabled.",
+    "recommendation": "Declare AES256, aws:kms, or aws:kms:dsse default bucket encryption and review key requirements for the workload.",
+    "documentation": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-properties-s3-bucket-serversideencryptionbydefault.html",
+    "heuristic": false
+  }
+]

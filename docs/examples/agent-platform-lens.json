@@ -69,7 +69,7 @@
   },
   {
     "id": "ORG-AGENT-005",
-    "version": "1",
+    "version": "2",
     "title": "Model calls must have bounded timeouts",
     "pillar": "RELIABILITY",
     "severity": "HIGH",
@@ -77,8 +77,11 @@
       "ChangeGuard::Agent::Workload"
     ],
     "property": "ModelTimeoutSeconds",
-    "operator": "LTE",
-    "expected": 120,
+    "operator": "BETWEEN",
+    "expected": [
+      1,
+      120
+    ],
     "rationale": "Organization-defined agent platform governance; explicit metadata supplied by the workload owner.",
     "recommendation": "Declare and enforce ModelTimeoutSeconds in the runtime platform.",
     "documentation": "https://docs.aws.amazon.com/wellarchitected/latest/userguide/lenses-custom.html",
@@ -86,7 +89,7 @@
   },
   {
     "id": "ORG-AGENT-006",
-    "version": "1",
+    "version": "2",
     "title": "Agent loops must have a maximum step count",
     "pillar": "RELIABILITY",
     "severity": "HIGH",
@@ -94,8 +97,11 @@
       "ChangeGuard::Agent::Workload"
     ],
     "property": "MaximumSteps",
-    "operator": "LTE",
-    "expected": 100,
+    "operator": "BETWEEN",
+    "expected": [
+      1,
+      100
+    ],
     "rationale": "Organization-defined agent platform governance; explicit metadata supplied by the workload owner.",
     "recommendation": "Declare and enforce MaximumSteps in the runtime platform.",
     "documentation": "https://docs.aws.amazon.com/wellarchitected/latest/userguide/lenses-custom.html",

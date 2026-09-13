@@ -1,0 +1,53 @@
+{
+  "generatedTerraformPlans": true,
+  "liveAws": false,
+  "githubRunId": null,
+  "phases": [
+    {
+      "phase": "baseline",
+      "status": "PASS",
+      "score": 100,
+      "reviewId": "a1570c3a-fe00-46b0-a802-71cc57dd3042"
+    },
+    {
+      "phase": "regression",
+      "status": "FAIL",
+      "score": 70,
+      "reviewId": "c9306c54-4cf6-4d37-ac34-b191a409a6f8"
+    },
+    {
+      "phase": "fixed",
+      "status": "PASS",
+      "score": 100,
+      "reviewId": "80355603-d109-420e-9e30-cee4c55ab5e0"
+    }
+  ],
+  "date": "2026-09-12",
+  "javaTests": 217,
+  "pythonTests": 10,
+  "mavenVerify": "passed",
+  "dockerBuild": "passed",
+  "terraformProviderVersion": "6.64.0",
+  "liveAwsMilestonesVerified": false,
+  "milestoneScope": "account-free",
+  "liveAwsVerification": "deferred by user; no AWS account",
+  "githubEvidence": {
+    "commit": "08dcf187ee95fe3344b385ac1223546220ba1cc2",
+    "event": "push",
+    "ci": "https://github.com/Parash-Shah/changeguard-aws-architecture-engine/actions/runs/34712989765",
+    "pilot": "https://github.com/Parash-Shah/changeguard-aws-architecture-engine/actions/runs/34712989801",
+    "conclusion": "success",
+    "prFailFixVerified": false
+  },
+  "requiredGithubCheckVerified": false,
+  "plans": {
+    "baseline": {
+      "terraformVersion": "1.12.2",
+      "sha256": "208044bb04052135545aa353898d0c77bfa4ac10640110ce34d164c7c1e0586b"
+    },
+    "regression": {
+      "terraformVersion": "1.12.2",
+      "sha256": "d3fe112a16d4d309044170136868b5dbf75c559bc12c5cf9b96418b960da01ea"
+    }
+  }
+}

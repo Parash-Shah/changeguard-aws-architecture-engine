@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check } from 'k6';
-export const options = { vus: 2, iterations: 20, thresholds: { http_req_failed: ['rate<0.01'] } };
+export const options = { vus: 2, iterations: Number(__ENV.ITERATIONS || 20), thresholds: { http_req_failed: ['rate<0.01'], checks: ['rate==1'] } };
 const resources = {};
 for (let i = 0; i < 5000; i++) resources['Volume' + i] = { Type: 'AWS::EC2::Volume', Properties: { Encrypted: true, VolumeType: 'gp3' } };
 export default function () {

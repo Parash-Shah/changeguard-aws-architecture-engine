@@ -8,6 +8,13 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.*;
 
 class RuleEdgeCaseTest {
+    @ParameterizedTest
+    @CsvSource({"tcp,22,22,false", "6,5432,5432,false", "udp,6379,6379,false", "tcp,443,443,true", "tcp,invalid,22,false", "tcp,23,22,false", "icmp,22,22,true"})
+    void quotedIngressPortsAndIcmpHaveCorrectSemantics(String protocol, String from, String to, boolean passed) throws Exception {
+        var resource = new CloudResource("sg", "AWS::EC2::SecurityGroup", Map.of("SecurityGroupIngress",
+                List.of(Map.of("CidrIp", "0.0.0.0/0", "IpProtocol", protocol, "FromPort", from, "ToPort", to))));
+        assertThat(rule("SEC-EC2-001").evaluate(resource).passed()).isEqualTo(passed);
+    }
     private ArchitectureRule rule(String id) throws Exception { return TestSupport.catalog().rules().stream().filter(r -> r.id().equals(id)).findFirst().orElseThrow(); }
     @ParameterizedTest @CsvSource({"Allow,*,*,false","Deny,*,*,true","Allow,s3:GetObject,*,true","Allow,s3:*,*,false"})
     void iamStatements(String effect,String action,String resource,boolean passed) throws Exception {
@@ -29,8 +36,22 @@ class RuleEdgeCaseTest {
     }
     @Test void catalogHasUniqueVersionedMetadataAcrossSixPillars() throws Exception {
         var rules=TestSupport.catalog().rules();
-        assertThat(rules).hasSize(42);
+        assertThat(rules).hasSize(43);
         assertThat(rules.stream().map(ArchitectureRule::pillar).distinct()).hasSize(6);
         assertThat(rules.stream().flatMap(r -> r.definition().resourceTypes().stream()).distinct()).hasSize(18);
+    }
+    @ParameterizedTest @CsvSource({"AES256,true", "aws:kms,true", "aws:kms:dsse,true", "none,false"})
+    void bucketEncryptionRequiresRecognizedAlgorithm(String algorithm, boolean passed) throws Exception {
+        var resource = new CloudResource("bucket", "AWS::S3::Bucket", Map.of("BucketEncryption",
+                Map.of("ServerSideEncryptionConfiguration", List.of(Map.of("ServerSideEncryptionByDefault", Map.of("SSEAlgorithm", algorithm))))));
+        assertThat(rule("SEC-S3-002").evaluate(resource).passed()).isEqualTo(passed);
+    }
+    @Test void malformedAndUnknownBucketEncryptionDoNotPass() throws Exception {
+        for (Object configuration : List.of(List.of(), List.of(Map.of()), "AES256")) {
+            var resource = new CloudResource("bucket", "AWS::S3::Bucket", Map.of("BucketEncryption", Map.of("ServerSideEncryptionConfiguration", configuration)));
+            assertThat(rule("SEC-S3-002").evaluate(resource).outcome()).isEqualTo(RuleResult.Outcome.FAIL);
+        }
+        var resource = new CloudResource("bucket", "AWS::S3::Bucket", Map.of("BucketEncryption", Map.of("Ref", "EncryptionConfig")));
+        assertThat(rule("SEC-S3-002").evaluate(resource).outcome()).isEqualTo(RuleResult.Outcome.UNKNOWN);
     }
 }

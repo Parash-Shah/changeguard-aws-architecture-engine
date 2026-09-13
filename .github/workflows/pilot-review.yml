@@ -1,0 +1,65 @@
+name: Pilot Architecture Review
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  pilot-architecture-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out proposed architecture
+        uses: actions/checkout@v4
+        with:
+          path: proposed
+          persist-credentials: false
+      - name: Check out trusted engine and baseline
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha || github.event.before }}
+          path: trusted
+          persist-credentials: false
+      - name: Require pilot bootstrap on base branch
+        run: |
+          if [ ! -f trusted/scripts/plan_pilot.py ]; then
+            echo "::error::The trusted baseline predates the pilot bootstrap. Merge the bootstrap first, then submit a new PR against the updated main branch. See docs/pilot.md."
+            echo "### Architecture review unavailable" >> "$GITHUB_STEP_SUMMARY"
+            echo "The trusted baseline lacks the pilot helper. This run cannot assess deployment risk; the bootstrap must reach the base branch before a new review can run." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+      - name: Restrict pilot PRs to supported configuration changes
+        run: |
+          diff trusted/infra/pilot/main.tf proposed/infra/pilot/main.tf
+          diff trusted/infra/pilot/.terraform.lock.hcl proposed/infra/pilot/.terraform.lock.hcl
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.12.2'
+          terraform_wrapper: false
+      - name: Generate baseline and proposed plans without AWS credentials
+        run: |
+          python3 trusted/scripts/plan_pilot.py --directory trusted/infra/pilot --output reports/baseline.json
+          python3 trusted/scripts/plan_pilot.py --directory trusted/infra/pilot --variables "$GITHUB_WORKSPACE/proposed/infra/pilot/proposed.tfvars.json" --output reports/proposed.json
+      - name: Start trusted ChangeGuard
+        working-directory: trusted
+        run: docker compose up -d --build --wait
+      - name: Evaluate proposed changes against base commit
+        run: >-
+          python3 trusted/scripts/scan.py reports/proposed.json --format TERRAFORM_PLAN
+          --baseline reports/baseline.json --quality-gate trusted/infra/pilot/gate.json
+          --output reports/review.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pilot-architecture-review
+          path: |
+            reports/review.json
+            reports/review.md
+          retention-days: 14
+      - name: Stop local services
+        if: always()
+        working-directory: trusted
+        run: docker compose down
+# This workflow has no AWS credentials, id-token permission, or deployment step.
+# Require pilot-architecture-gate in a ruleset after merging the bootstrap.

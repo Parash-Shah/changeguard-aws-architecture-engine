@@ -1,0 +1,18 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CreateReviewWorkloadInPilotRegion",
+      "Effect": "Allow",
+      "Action": "wellarchitected:CreateWorkload",
+      "Resource": "*",
+      "Condition": { "StringEquals": { "aws:RequestedRegion": "us-east-1" } }
+    },
+    {
+      "Sid": "CaptureReviewMilestonesInPilotAccount",
+      "Effect": "Allow",
+      "Action": "wellarchitected:CreateMilestone",
+      "Resource": "arn:aws:wellarchitected:us-east-1:451971656257:workload/*"
+    }
+  ]
+}

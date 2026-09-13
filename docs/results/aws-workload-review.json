@@ -1,0 +1,19 @@
+{
+  "liveAws" : true,
+  "recordedAt" : "2026-09-13T21:16:54.307855600Z",
+  "region" : "us-east-1",
+  "workloadId" : "b384e9fc79f94d32b19e7ced7549e946",
+  "lens" : "wellarchitected",
+  "lensVersion" : "2025-02-25",
+  "riskCounts" : {
+    "UNANSWERED" : 57,
+    "HIGH" : 0,
+    "MEDIUM" : 0,
+    "NONE" : 0,
+    "NOT_APPLICABLE" : 0
+  },
+  "existingMilestones" : [ 1, 2 ],
+  "questionId" : "cloud-financial-management",
+  "answerRisk" : "UNANSWERED",
+  "milestoneRoundTrip" : false
+}
