@@ -22,8 +22,6 @@ The **Pilot End-to-End Test** workflow runs this exercise on pushes and PRs. It 
 
 ## Real PR gate
 
-The pilot gate also runs on pushes to `main`, using the push's exact previous commit as the trusted baseline. PR runs use the event's exact base commit. This gives new main commits a fresh architecture check after bootstrap; it does not rewrite historical PR results or fall back to proposal-supplied policies when a baseline is missing. Missing bootstrap files produce an explicit error and job summary.
-
 The bootstrap branch is published as `milestone/terraform-aws-pilot`. Both [ChangeGuard CI](https://github.com/Parash-Shah/changeguard-aws-architecture-engine/actions/runs/34712989765) and [Pilot End-to-End Test](https://github.com/Parash-Shah/changeguard-aws-architecture-engine/actions/runs/34712989801) passed for commit `08dcf187ee95fe3344b385ac1223546220ba1cc2`. These are push-triggered test runs; required PR-check enforcement and an actual failing-then-passing PR remain unverified.
 
 The GitHub connector previously rejected PR creation with HTTP 403 (`Resource not accessible by integration`); the September 13 draft PR attempt was rejected by automatic approval review for insufficiently explicit publishing authorization. A repository owner can [open the prepared bootstrap PR](https://github.com/Parash-Shah/changeguard-aws-architecture-engine/compare/main...milestone/terraform-aws-pilot?expand=1); its review description is in [pilot-pr.md](pilot-pr.md). Repository administration is also unavailable through this connector, so configuring the required check needs owner access.

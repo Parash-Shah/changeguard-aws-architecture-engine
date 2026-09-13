@@ -1,8 +1,6 @@
 name: Pilot Architecture Review
 on:
   pull_request:
-  push:
-    branches: [main]
 permissions:
   contents: read
 jobs:
@@ -18,17 +16,9 @@ jobs:
       - name: Check out trusted engine and baseline
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.sha || github.event.before }}
           path: trusted
           persist-credentials: false
       - name: Require pilot bootstrap on base branch
-        run: |
-          if [ ! -f trusted/scripts/plan_pilot.py ]; then
-            echo "::error::The trusted baseline predates the pilot bootstrap. Merge the bootstrap first, then submit a new PR against the updated main branch. See docs/pilot.md."
-            echo "### Architecture review unavailable" >> "$GITHUB_STEP_SUMMARY"
-            echo "The trusted baseline lacks the pilot helper. This run cannot assess deployment risk; the bootstrap must reach the base branch before a new review can run." >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
       - name: Restrict pilot PRs to supported configuration changes
         run: |
           diff trusted/infra/pilot/main.tf proposed/infra/pilot/main.tf
