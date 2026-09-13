@@ -88,7 +88,7 @@ Properties are deeply immutable. Canonical keys follow CloudFormation names such
 
 ## Rule Engine
 
-**42 declarative policies** plus stateful-destruction and alarm-removal checks. Policy metadata includes version, rationale, recommendation and documentation. The evaluator supports property comparisons, presence checks, allow-list membership, IAM wildcard checks and public administrative ingress checks. Rules load from JSON files; change a trusted external catalog and restart to deploy policies without recompiling.
+**43 declarative policies** plus stateful-destruction and alarm-removal checks. Policy metadata includes version, rationale, recommendation and documentation. The evaluator supports property comparisons, presence checks, allow-list membership, IAM wildcard checks, explicit S3 encryption and public administrative ingress checks. Rules load from JSON files; change a trusted external catalog and restart to deploy policies without recompiling.
 
 See [policy definitions](rules) and [operator semantics](docs/rule-engine.md). Rules about resource sizing, ARM adoption and capacity are marked heuristics, not universal architecture requirements. Missing explicit configuration is distinct from knowledge of AWS account defaults. This is a bounded policy checker, not a full IAM authorization simulator or compliance certification.
 
@@ -96,7 +96,7 @@ See [policy definitions](rules) and [operator semantics](docs/rule-engine.md). R
 
 | Pillar | Catalog rules |
 |---|---:|
-| Security | 12 |
+| Security | 13 |
 | Reliability | 10 |
 | Operational excellence | 8 |
 | Performance efficiency | 4 |
@@ -151,6 +151,8 @@ python scripts/scan.py tfplan.json --format TERRAFORM_PLAN
 
 ChangeGuard never runs HCL or Terraform itself. It handles managed resource before/after values and action sequences, including replacement. Terraform JSON can contain sensitive plaintext; protect the artifact. See HashiCorp's [JSON format specification](https://developer.hashicorp.com/terraform/internals/json-format).
 
+S3 public-access, versioning, lifecycle and encryption configuration resources are joined to their bucket when the bucket name/ID is known and unambiguous. Both snapshots are joined independently, so removing a control becomes a bucket regression. Unknown targets remain unsupported; conflicting configuration owners become unknown. Plans marked incomplete, errored or containing deferred changes are rejected.
+
 ## CloudFormation Integration
 
 `POST /v1/reviews` accepts a template as a JSON string:
@@ -164,7 +166,20 @@ ChangeGuard never runs HCL or Terraform itself. It handles managed resource befo
 
 For change-set analysis, also provide `baselineTemplate`/`baselineReviewId` and `changeSet` as a JSON string containing the complete AWS `DescribeChangeSet` output. A change set alone is not a full proposed property snapshot. Paginated output must be merged before submission.
 
+The CLI also accepts these inputs directly:
+
+```sh
+python scripts/scan.py proposed.json --baseline current.json --change-set changeset.json \
+  --quality-gate trusted-gate.json --suppressions approved-exceptions.json --regressions-only
+```
+
+The gate file contains a JSON object using the fields above; the exceptions file contains the suppression array. Protect both files in production CI. Missing files, malformed responses and unrecognized gate statuses exit with code 2; a failed gate exits with code 1.
+
+Local scans create fresh reviews. Use `--idempotency-key` to retry a specific request; GitHub invocations derive a stable key from the workflow run, attempt and request body.
+
 ## GitHub Actions Integration
+
+The [end-to-end pilot](docs/pilot.md) generates real Terraform plans and verifies PASS → FAIL → PASS through the API. Its separate PR gate uses the exact base commit's engine, policy and Terraform module. Bootstrap it on the base branch before making `pilot-architecture-gate` required. Live AWS milestone verification is opt-in and remains separate from offline plan tests.
 
 [Architecture workflow](.github/workflows/architecture-review.yml) starts an isolated local service, scans a fixture, uploads reports and uses the job result as the PR check. In a workload repository, replace the fixture path with the actual generated deployment artifact and pass a trusted baseline. The supplied workflow is a working demonstration, not automatic discovery of your infrastructure files. It uses no AWS credentials or PR-comment permissions.
 
@@ -185,24 +200,24 @@ Tables: `review`, `resource`, `finding`, `rule_definition`, `review_milestone`, 
 
 ## AWS Well-Architected Tool Integration
 
-Disabled by default. Set `AWS_INTEGRATION_ENABLED=true`, `AWS_REGION`, and provide credentials through the AWS SDK default chain. Optional endpoints create/reference workloads, retrieve lens risk counts and answers, create milestones with caller-supplied idempotency tokens, and retrieve review reports. `GET /v1/aws/workloads/{id}/lenses/{lens}?milestone=N` reads historical context; compare milestone responses independently of ChangeGuard scores.
+Disabled by default. Set `AWS_INTEGRATION_ENABLED=true`, `AWS_REGION`, and provide credentials through the AWS SDK default chain. Optional endpoints create/reference workloads, retrieve lens risk counts and historical answers, list milestone pages, create milestones with caller-supplied idempotency tokens, and retrieve review reports. `GET /v1/aws/workloads/{id}/comparison?from=1&to=2` compares risk counts across milestones; deltas are omitted when lens versions differ. Workload creation accepts production/preproduction environments and lens aliases or imported custom lens ARNs. See [AWS endpoint examples and semantics](docs/aws-integration.md).
 
-The adapter is unit-tested with mocked AWS responses. **No live AWS workload was created or modified during local verification.** Publishing a real custom AWS lens and importing automated findings into AWS answers remain future integration work. See [AWS API reference](https://docs.aws.amazon.com/wellarchitected/latest/APIReference/Welcome.html).
+The adapter is unit-tested with mocked AWS responses. Browser-login authentication, workload creation, Java workload/lens/answer reads, and creation/comparison of two real milestones were verified on September 13. The new workload has 57 unanswered questions, so unchanged risk counts verify integration behavior rather than architecture improvement. [Live evidence](docs/results/aws-milestones.json). Publishing a real custom AWS lens and importing automated findings into AWS answers remain future integration work. See [AWS API reference](https://docs.aws.amazon.com/wellarchitected/latest/APIReference/Welcome.html).
 
 ## Performance
 
-The synthetic engine experiment runs 5,000 resources × 100 synthetic predicates = 500,000 applicable checks. Five samples per mode, Microsoft Java 21.0.12.1 on Windows 11, 8 reported processors:
+September 13 API measurement: **100 reviews, 5,000 EBS resources per review, two concurrent users; median 601 ms, P95 1.10 s, 0 failed HTTP requests and 200/200 checks passed**. The rebuilt Docker API and PostgreSQL handled 10,000 applicable production-catalog checks per review. The same template was reused with fresh persisted reviews, so cache reuse is included. The maximum request took 4.30 s. This is a local measurement, not a production SLO. [Raw results](docs/results/release-api-load.json).
+
+A separate synthetic engine experiment ran 5,000 resources ? 100 predicates = 500,000 applicable checks per evaluation. Ten samples per mode compared cold and warm caches on Java 21/Windows 11 with eight reported processors:
 
 | Threads | Cold P50 | Cold P95 | Warm P50 | Warm P95 |
 |---:|---:|---:|---:|---:|
-| 1 | 2006 ms | 2732 ms | 766 ms | 1058 ms |
-| 4 | 898 ms | 1039 ms | 268 ms | 551 ms |
-| 8 | 706 ms | 998 ms | 233 ms | 346 ms |
-| 16 | 786 ms | 851 ms | 207 ms | 300 ms |
+| 1 | 1864 ms | 4556 ms | 701 ms | 953 ms |
+| 4 | 1200 ms | 1855 ms | 507 ms | 723 ms |
+| 8 | 633 ms | 1353 ms | 223 ms | 351 ms |
+| 16 | 645 ms | 710 ms | 219 ms | 258 ms |
 
-Eight threads had the best median cold throughput in this small run; sixteen did not improve it. Cache hits improve repeated scans, but concurrency/GC/noise affect results. These numbers exclude parsing, HTTP, SQL and AWS; **they do not establish an API P95 below two seconds**. Five samples are exploratory, not a production capacity study. [Harness and methodology](load-tests/README.md), [recorded results](docs/results/engine.json).
-
-A separate local k6 run sent 20 HTTP reviews with two concurrent users, each containing 5,000 EBS resources (10,000 applicable catalog checks per review), through the Dockerized API and PostgreSQL. All requests/checks passed; HTTP median was 405 ms and P95 was 1.45 s. This small local run includes parsing and persistence but is not the 100-rule engine workload above or a production SLO. [Raw HTTP results](docs/results/api-load.txt).
+Eight threads had the best cold median; sixteen did not improve it. The one-thread cold P95 exceeded the two-second target. Engine timings exclude parsing, HTTP, persistence and AWS; they are not API latency. With only ten samples, nearest-rank P95 is the maximum observation, so these are exploratory measurements. Warm counts include cache hits; heap usage is sampled after runs, not peak allocation. [Current engine results](docs/results/release-engine.json), [methodology](load-tests/README.md). Earlier measurements remain in [engine.json](docs/results/engine.json) and [api-load.txt](docs/results/api-load.txt).
 
 ## Evaluation Results
 
@@ -218,7 +233,7 @@ The deterministic suite uses **150 synthetic variations of 15 hand-authored muta
 
 These results apply only to this fixture suite and do not establish production recall or false-positive rates. [Recorded evaluation](docs/results/scenarios.json). `mvn verify` also runs parser, operator, regression, concurrency, AWS-adapter and PostgreSQL/API tests; raw reports are under `target/surefire-reports` and `target/failsafe-reports`.
 
-Local verification passed **188 tests**: 182 unit/scenario tests and 6 actual PostgreSQL integration tests, with no failures or skips. Integration tests include pausing PostgreSQL, checking HTTP 503, restoring it, and retrying without duplicate persistence. The container smoke test returned PASS/100 for the secure fixture and FAIL/70 for the [Terraform regression demo](docs/results/demo-review.json). Docker image build and Terraform validation/format checks also passed; Terraform validation used Linux Docker because the workstation's Windows provider TLS handshake failed.
+September 13 acceptance passed **233 Java tests**, including six PostgreSQL integration tests, with no failures, errors or skips; **10 Python tests** also passed. Docker build, Terraform validation/formatting, generated-plan PASS/FAIL/PASS, Grafana health and Prometheus scraping were verified. The final audit fixed quoted ingress port handling, rule applicability failure isolation, and nonpositive agent limits, and added rule-level violation metrics. See [release evidence](docs/results/release.json) and the [30-milestone audit](docs/completion.md). GitHub PR enforcement remains the external acceptance step. Live AWS workload and milestone acceptance subsequently passed; evidence is linked in the release report.
 
 ## Failure Handling
 
@@ -246,7 +261,7 @@ sh mvnw spring-boot:run
 
 Or use `docker compose up -d --build --wait` for the full container stack. Import `pom.xml` as a Maven project in IntelliJ and select JDK 21. The original starter `src/Main.java` has been replaced by `com.changeguard.ChangeGuardApplication`.
 
-Environment variables: `DATABASE_URL`, `DATABASE_USER`, `DATABASE_PASSWORD`, `CHANGEGUARD_API_KEY`, `SERVER_ADDRESS`, `EVALUATION_THREADS` (1–16), `RULES_LOCATION`, `AWS_INTEGRATION_ENABLED`, `AWS_REGION`. Local database credentials default to `changeguard/changeguard`; the host listener defaults to loopback.
+Environment variables: `DATABASE_URL`, `DATABASE_USER`, `DATABASE_PASSWORD`, `CHANGEGUARD_API_KEY`, `SERVER_ADDRESS`, `EVALUATION_THREADS` (1–16), `RULES_LOCATION`, `AWS_INTEGRATION_ENABLED`, `AWS_REGION`, `AWS_PROFILE`. Local database credentials default to `changeguard/changeguard`; the host listener defaults to loopback.
 
 On this Windows workstation, [local-maven.ps1](scripts/local-maven.ps1) locates IntelliJ Maven and the locally downloaded JDK and uses Windows certificate trust. Run with `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/local-maven.ps1 verify` if standard Java/Maven PATH entries are absent; this changes execution policy only for that process. Tool downloads are ignored under `.tools/`, not project dependencies.
 
@@ -264,6 +279,7 @@ The optional PKCS12 certificate-only store uses password `changeit`; it is mount
 ```sh
 sh mvnw test       # deterministic tests; no Docker required
 sh mvnw verify     # adds actual PostgreSQL Testcontainers integration tests
+python3 -m unittest discover -s scripts -p 'test_*.py'
 ```
 
 Integration tests intentionally require Docker; they are not silently skipped. CI runs verification, a Docker build, and Terraform format/validation. Performance runs are separate so normal test runs remain predictable. See [load tests](load-tests/README.md).
@@ -279,7 +295,7 @@ The canonical property vocabulary simplifies rule reuse but needs explicit Terra
 ## Limitations
 
 - No CloudFormation macro/intrinsic resolution, YAML support, HCL parsing, IAM condition simulation, runtime topology discovery or AWS account-default lookup.
-- Terraform split resources such as S3 bucket encryption/public-access/versioning policies are not joined; missing declarations may fail explicit-configuration policies, while unsupported split types fail analysis. Some provider-specific blocks need further adapters.
+- Terraform S3 configuration joins require a known, unambiguous bucket name/ID. Other split resources and some provider-specific blocks still need adapters; unsupported types fail analysis.
 - Heuristic checks need workload-specific validation. Policy scores are not AWS compliance or risk probabilities.
 - Single API key, no multi-tenant authorization, no approved-exception workflow, and no automatic promotion of trusted baselines.
 - Body/connection limits and quotas require a production reverse proxy; local Content-Length checks alone are insufficient for streamed uploads.

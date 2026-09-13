@@ -1,0 +1,59 @@
+{
+  "scope" : "Synthetic in-process predicate benchmark; warm counts include cache hits; not API latency",
+  "results" : [ {
+    "threads" : 1,
+    "resources" : 5000,
+    "applicableChecks" : 500000,
+    "samplesPerMode" : 10,
+    "coldP50Ms" : 1864.0313,
+    "coldP95Ms" : 4556.1466,
+    "warmP50Ms" : 701.2991,
+    "warmP95Ms" : 953.4171,
+    "coldChecksPerSecond" : 268235.83917287225,
+    "maxObservedHeapBytes" : 393121264,
+    "coldSamplesMs" : [ 1864.0313, 1277.3076, 1373.1318, 1215.6154, 1262.9477, 2449.3445, 4556.1466, 3582.3696, 2341.3825, 2449.4898 ],
+    "warmSamplesMs" : [ 701.2991, 508.4926, 562.6474, 429.7855, 441.355, 946.3751, 904.2545, 887.4042, 822.7196, 953.4171 ]
+  }, {
+    "threads" : 4,
+    "resources" : 5000,
+    "applicableChecks" : 500000,
+    "samplesPerMode" : 10,
+    "coldP50Ms" : 1199.5659,
+    "coldP95Ms" : 1854.7419,
+    "warmP50Ms" : 506.6894,
+    "warmP95Ms" : 723.1141,
+    "coldChecksPerSecond" : 416817.4503793414,
+    "maxObservedHeapBytes" : 366105472,
+    "coldSamplesMs" : [ 1593.2036, 1231.9389, 1293.8921, 1199.5659, 1854.7419, 1132.5642, 1153.5701, 1213.716, 883.989, 605.9325 ],
+    "warmSamplesMs" : [ 528.2686, 521.2847, 474.3525, 511.6761, 723.1141, 506.6894, 459.9324, 531.6324, 306.5591, 226.6595 ]
+  }, {
+    "threads" : 8,
+    "resources" : 5000,
+    "applicableChecks" : 500000,
+    "samplesPerMode" : 10,
+    "coldP50Ms" : 633.3354,
+    "coldP95Ms" : 1352.8103,
+    "warmP50Ms" : 222.7633,
+    "warmP95Ms" : 350.7178,
+    "coldChecksPerSecond" : 789471.1080416474,
+    "maxObservedHeapBytes" : 339621312,
+    "coldSamplesMs" : [ 584.6214, 579.7216, 619.6485, 625.2166, 707.1783, 633.3354, 822.9743, 672.3079, 638.0258, 1352.8103 ],
+    "warmSamplesMs" : [ 197.152, 209.2986, 257.2802, 214.8878, 222.7633, 195.3066, 287.1609, 246.9748, 261.1711, 350.7178 ]
+  }, {
+    "threads" : 16,
+    "resources" : 5000,
+    "applicableChecks" : 500000,
+    "samplesPerMode" : 10,
+    "coldP50Ms" : 644.7413,
+    "coldP95Ms" : 710.1633,
+    "warmP50Ms" : 218.6661,
+    "warmP95Ms" : 257.7491,
+    "coldChecksPerSecond" : 775504.842019582,
+    "maxObservedHeapBytes" : 340539088,
+    "coldSamplesMs" : [ 622.9126, 675.4087, 665.3337, 710.1633, 654.8387, 637.2045, 674.1885, 644.4305, 617.3882, 644.7413 ],
+    "warmSamplesMs" : [ 221.4814, 218.6661, 239.8358, 213.7054, 204.3182, 214.3433, 191.8865, 257.7491, 224.1397, 223.876 ]
+  } ],
+  "processors" : 8,
+  "os" : "Windows 11",
+  "java" : "21.0.12.1"
+}

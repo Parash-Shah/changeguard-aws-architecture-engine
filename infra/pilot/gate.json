@@ -1,0 +1,6 @@
+{
+  "minimumScore": 80,
+  "failOn": ["CRITICAL"],
+  "maxHighFindings": 0,
+  "regressionsOnly": true
+}

@@ -1,0 +1,150 @@
+{
+  "recordedAt": "2026-09-13T17:01:08.872009+00:00",
+  "scope": "Local release candidate and live AWS workload/milestone acceptance verified; GitHub PR enforcement pending",
+  "java": {
+    "tests": 233,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "postgresqlIntegrationTests": 6,
+  "pythonTests": 10,
+  "mavenVerify": "passed",
+  "catalogRules": 43,
+  "resourceTypes": 18,
+  "pillars": 6,
+  "dockerBuild": "passed",
+  "dockerImageId": "sha256:292c8e30635f659a143d8ed4543b09f4cb0d6fcceef82679290b9afeb43999aa",
+  "terraform": {
+    "version": "1.12.2",
+    "deploymentModuleValidate": "passed",
+    "recursiveFormatCheck": "passed",
+    "applied": false
+  },
+  "pilot": {
+    "generatedTerraformPlans": true,
+    "liveAws": false,
+    "githubRunId": null,
+    "phases": [
+      {
+        "phase": "baseline",
+        "status": "PASS",
+        "score": 100,
+        "reviewId": "915cb5ce-f9e1-4980-9815-a1eb0b1cbe5c"
+      },
+      {
+        "phase": "regression",
+        "status": "FAIL",
+        "score": 70,
+        "reviewId": "82a411a1-62d3-46fe-b81a-b8b7f0235d0b"
+      },
+      {
+        "phase": "fixed",
+        "status": "PASS",
+        "score": 100,
+        "reviewId": "4d395060-bdc4-433c-a28e-a0e32df97fd8"
+      }
+    ]
+  },
+  "accuracyCorpus": {
+    "dataset": "150 synthetic variations of 15 hand-authored mutations; not a production accuracy estimate",
+    "safeScenarios": 60,
+    "unsafeScenarios": 90,
+    "criticalScenarios": 30,
+    "criticalBlocked": 30,
+    "unsafeDetected": 90,
+    "falsePositives": 0
+  },
+  "apiLoad": {
+    "reviews": 100,
+    "concurrentUsers": 2,
+    "resourcesPerReview": 5000,
+    "applicableChecksPerReview": 10000,
+    "templateReuse": true,
+    "p50Ms": 600.7097175,
+    "p95Ms": 1102.0036186499995,
+    "maxMs": 4296.833282,
+    "checkPasses": 200,
+    "checkFailures": 0,
+    "httpFailureRate": 0
+  },
+  "engineBenchmark": {
+    "resources": 5000,
+    "syntheticRules": 100,
+    "applicableChecksPerEvaluation": 500000,
+    "samplesPerMode": 10,
+    "resultsFile": "release-engine.json"
+  },
+  "observability": {
+    "grafanaHealth": "ok",
+    "prometheusTarget": "up",
+    "ruleLabelsVerified": true,
+    "dashboardPanels": 9
+  },
+  "aws": {
+    "browserLoginDiscovery": {
+      "operation": "ListWorkloads",
+      "region": "us-east-1",
+      "recordedAt": "2026-09-13T16:53:38.090230800Z",
+      "workloadCount": 0,
+      "liveAws": true,
+      "milestoneRoundTrip": false
+    },
+    "createWorkload": "passed",
+    "liveWorkloadReviewVerified": true,
+    "liveMilestonesVerified": true,
+    "workloadId": "b384e9fc79f94d32b19e7ced7549e946",
+    "liveAnswerReadVerified": true,
+    "milestoneEvidence": "aws-milestones.json",
+    "workloadEvidence": "aws-workload-review.json",
+    "verifiedAt": "2026-09-13T21:16:54.307855600Z"
+  },
+  "github": {
+    "newDraftPr": "automatic approval review rejected publication",
+    "previousConnectorWriteAttempt": "HTTP 403",
+    "requiredCheckVerified": false,
+    "realPrFailFixVerified": false
+  },
+  "sourceSha256": {
+    "pom.xml": "dc3a3bcfc7c465a494307b4668c19f6d70ca48dad774d4f7675a9726fbbcc68e",
+    "src/main/java/com/changeguard/api/ApiExceptionHandler.java": "78384d62d6198ca4f6e078dd60ecc3c5c8e9722314a961d395fad88ba44c9c29",
+    "src/main/java/com/changeguard/api/ApiKeyFilter.java": "1c968073987e8637ee88744c0795c8c2b27aab9e776dc34b5f36258988f89d93",
+    "src/main/java/com/changeguard/api/ReviewController.java": "df147ae07aad03ca63a752b8f7683aef1e7a179ed4a3efc43cb20deece6bfc15",
+    "src/main/java/com/changeguard/api/ReviewRequest.java": "85674b0ea934e20a8b6a1207501f9be05e2920c34ad68a02833c8f35488ddcfa",
+    "src/main/java/com/changeguard/aws/WellArchitectedController.java": "94278dace776d9b5277643e86cd72421a6c108d3e84002c113c2deb055fad848",
+    "src/main/java/com/changeguard/aws/WellArchitectedGateway.java": "4aaff9989c5b9d8c09b9fa47957e0f4d96b8397cedc8876819b48a3a1288a023",
+    "src/main/java/com/changeguard/ChangeGuardApplication.java": "e4ee4ae0aaf28d74f7de1b97689c45e997486caa418e521a82d8289912721bdb",
+    "src/main/java/com/changeguard/evaluation/ArchitectureEvaluationService.java": "9f8eb8fa93f91638e1a743bb5591461fbe722d967a170333c61c0b7fa3548f1c",
+    "src/main/java/com/changeguard/evaluation/ArchitectureReport.java": "be9014ca054f0f4e9e406435854781275a620bf984d7b34cb657fc84efba7034",
+    "src/main/java/com/changeguard/evaluation/QualityGate.java": "0b4b0c1a4ab5e9d67eecf87658808254400f35426cd9a9fa21224cb324bfe521",
+    "src/main/java/com/changeguard/evaluation/ResourceChange.java": "192b72509ca54180a541fc03088bf99cca37039795f7e6585f61a9d8de89b8c9",
+    "src/main/java/com/changeguard/evaluation/Suppression.java": "b1f68fc9e94304141423eabfe286c099f5594afb9b523dbc6bd12d5a991b4d03",
+    "src/main/java/com/changeguard/findings/Finding.java": "c3109386f23adcf24756cdf7a689560e80d919218d736d94c7e88c90faa2ffa4",
+    "src/main/java/com/changeguard/github/MarkdownController.java": "e1ae3782c6e20d75c9a6672aa800c0d6a1135cc74e3ef8f4b9cd3d33e1c7cd15",
+    "src/main/java/com/changeguard/github/ReviewMarkdown.java": "b304472a76fe523edd6ef8747e049a44f29979e8ccc97d298bc1e5b3bedd6b5f",
+    "src/main/java/com/changeguard/model/CloudResource.java": "9429b62862f8aa7afbd576d7a03bb7ddcce94669bcefd6cc464517bec55c1a20",
+    "src/main/java/com/changeguard/model/Pillar.java": "c6ef105727bc457dd8d3488c49ff9587f6ed63bb7bd6bb30db37e5bd23acf70f",
+    "src/main/java/com/changeguard/model/Severity.java": "abb5d832599dbc79866e7dccf2db1f7b53d4ab4aabc66e5ed8a9c6c2b5eb7153",
+    "src/main/java/com/changeguard/parser/ChangeParser.java": "447855cfaad104e3ec96845bbed7a6981d94d2666e917ffdfa1a7d7871075683",
+    "src/main/java/com/changeguard/parser/CloudFormationParser.java": "55da3d532887fada5f7714cf7954e2e3da779384a10dd9cf36352c21af267af8",
+    "src/main/java/com/changeguard/parser/InfrastructureParser.java": "baa764ca44abed5456dbd8c188a2a9fab9f02b7168760a4da02a91a45cb6b6d2",
+    "src/main/java/com/changeguard/parser/TerraformPlanParser.java": "4a79a8583a3c6ca0446ee4cbecd43823932b88a6cbbc03590299fb076665aa6d",
+    "src/main/java/com/changeguard/persistence/ReviewEntity.java": "0fb8f269009fae4862a32e9ad1e78ddcee21c1d99aeb089729930392c78121a0",
+    "src/main/java/com/changeguard/persistence/ReviewRepository.java": "576463e029ed951221f6324dbb18eda58c1b4d8478600d324d57329b04f02f36",
+    "src/main/java/com/changeguard/persistence/ReviewService.java": "bd0cbd03257ca06926a83e96c72cd9af045aca512c5fc984d51d55698d3fb371",
+    "src/main/java/com/changeguard/rules/ArchitectureRule.java": "c3b812ae5797f3e8518c93f6bb5202ac1ccecc7f0043905da69d4350d95edb17",
+    "src/main/java/com/changeguard/rules/DeclarativeRule.java": "5184c144278c2d590a25b34d8df6d9794f93eae848749b6063e5da311e922bf5",
+    "src/main/java/com/changeguard/rules/RuleCatalog.java": "bfbec3cf192358c877c5e834c16111c231c6b0fd71e18eda54ad2afa6f81b564",
+    "src/main/java/com/changeguard/rules/RuleDefinition.java": "ab2f145fc60310f41bedb6d04d779c9c4abd49e44e81803f504d4748160aa504",
+    "src/main/java/com/changeguard/rules/RuleResult.java": "ca71c116832c2421b88a37ec31fc35166673d8bca7cf0f9d089238067a3860b4",
+    "src/main/resources/application.yml": "734ec1510388567b99528d3ae75706f215dabdafb07e6b403e732bc350997cdc",
+    "src/main/resources/db/migration/V1__architecture_reviews.sql": "5a6273b356e289596ce03bf23dc9529c416db04d6754038b6dff1bcd52f43bfe",
+    "rules/cost/rules.json": "58f7229fea78add3c7610cabec1c42db9cc06dc88ce4810edec9c8b7f3dcd0a9",
+    "rules/operations/rules.json": "4a211556a01f871e024fd4dbf904c51ecdf862eeffd8470aaa57b14a422b3a09",
+    "rules/performance/rules.json": "149064bececb033ae77ef24b7bd62bcc5f59061e3438615bd5e71db16dcfb374",
+    "rules/reliability/rules.json": "c6deaf63ff2fa8834b6d583833ba4007d8dbc7aa249aa5b555d350a8e0d625d9",
+    "rules/security/rules.json": "baa0dfc567090d77ae841dec772390fda2b69f343aa169f70fe2e607872f592e",
+    "rules/security/s3-encryption.json": "27c52b215da9bd74d3523ab6861efbfc7b3d2da482e4e1e9d717bb3bc32ff411",
+    "rules/sustainability/rules.json": "98beefa35ec59dc9b7f101725211f158dd3a4be9123b5c59754d03877d56e421"
+  }
+}

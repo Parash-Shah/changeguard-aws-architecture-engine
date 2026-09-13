@@ -11,13 +11,48 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.*;
 
 class EngineTest {
+    @Test void violationMetricsIdentifyRuleAndSeparateSuppressedFindings() throws Exception {
+        var registry = new SimpleMeterRegistry();
+        var rule = TestSupport.catalog().rules().stream().filter(r -> r.id().equals("SEC-EBS-001")).findFirst().orElseThrow();
+        try (var engine = new ArchitectureEvaluationService(List.of(rule), registry, 1, 100, Clock.systemUTC())) {
+            var resource = List.of(new CloudResource("data", "AWS::EC2::Volume", Map.of("Encrypted", false)));
+            engine.evaluate(resource, null, List.of(), QualityGate.defaults(), List.of());
+            engine.evaluate(resource, null, List.of(), QualityGate.defaults(), List.of(
+                    new Suppression(rule.id(), "data", "Sandbox exception", LocalDate.now(ZoneOffset.UTC).plusDays(1))));
+            assertThat(registry.get("changeguard_findings").tags("rule", rule.id(), "outcome", "FAIL", "suppressed", "false").counter().count()).isEqualTo(1);
+            assertThat(registry.get("changeguard_findings").tags("rule", rule.id(), "outcome", "FAIL", "suppressed", "true").counter().count()).isEqualTo(1);
+        }
+    }
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints={1,4})
+    void applicabilityFailureDoesNotAbortOtherRulesOrBecomeSuppressible(int threads) throws Exception {
+        var healthy = TestSupport.catalog().rules().stream().filter(r -> r.id().equals("SEC-EBS-001")).findFirst().orElseThrow();
+        var original = healthy.definition();
+        ArchitectureRule broken = new ArchitectureRule() {
+            public RuleDefinition definition() { return new RuleDefinition("BROKEN-SUPPORT", "1", original.title(), original.pillar(), original.severity(),
+                    original.resourceTypes(), original.property(), original.operator(), original.expected(), original.rationale(), original.recommendation(), original.documentation(), false); }
+            public boolean supports(CloudResource resource) { throw new IllegalStateException("private applicability input"); }
+            public RuleResult evaluate(CloudResource resource) { throw new AssertionError("Must not evaluate after failed applicability"); }
+        };
+        try (var engine = new ArchitectureEvaluationService(List.of(broken, healthy), new SimpleMeterRegistry(), threads, 100, Clock.systemUTC())) {
+            var resource = new CloudResource("data", "AWS::EC2::Volume", Map.of("Encrypted", false));
+            var report = engine.evaluate(List.of(resource), null, List.of(), QualityGate.defaults(), List.of(
+                    new Suppression("BROKEN-SUPPORT", "data", "Cannot waive broken analysis", LocalDate.now(ZoneOffset.UTC).plusDays(1))));
+            assertThat(report.status()).isEqualTo(ArchitectureReport.Status.FAIL);
+            assertThat(report.ruleErrors()).isEqualTo(1);
+            assertThat(report.evaluations()).isEqualTo(2);
+            assertThat(report.findings()).anyMatch(f -> f.ruleId().equals("SEC-EBS-001") && f.outcome() == RuleResult.Outcome.FAIL);
+            assertThat(report.findings()).anyMatch(f -> f.ruleId().equals("BROKEN-SUPPORT") && !f.suppressed()
+                    && !f.message().contains("private"));
+        }
+    }
     private final CloudFormationParser parser = new CloudFormationParser();
     @Test void allGoodFixtureChecksPass() throws Exception {
         var engine = TestSupport.engine();
         try {
             var report = engine.evaluate(parser.parse(TestSupport.fixture("good/production.json")), null,List.of(),QualityGate.defaults(),List.of());
             assertThat(report.score()).isEqualTo(100); assertThat(report.status()).isEqualTo(ArchitectureReport.Status.PASS);
-            assertThat(report.evaluations()).isEqualTo(42); assertThat(report.findings()).isEmpty();
+            assertThat(report.evaluations()).isEqualTo(43); assertThat(report.findings()).isEmpty();
         } finally { engine.close(); }
     }
     @Test void detectsRegressionsAndResolutions() throws Exception {

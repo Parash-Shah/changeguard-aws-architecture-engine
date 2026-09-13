@@ -44,6 +44,9 @@ public class ChangeParser {
                     : actions.equals(List.of("create")) ? ResourceChange.Action.CREATE
                     : actions.equals(List.of("update")) ? ResourceChange.Action.MODIFY : null;
             if (action == null) throw new IllegalArgumentException("Unsupported Terraform change actions");
+            // These resources become bucket properties; snapshot diffing captures additions/removals.
+            // Unresolved attachments remain visible as unsupported resources in those snapshots.
+            if (TerraformPlanParser.isS3Configuration(item.path("type").asText())) continue;
             String id = item.path("address").asText();
             changes.add(new ResourceChange(id, types.getOrDefault(id, "Terraform::" + item.path("type").asText()), action, ResourceChange.Risk.NEUTRAL, List.of()));
         }

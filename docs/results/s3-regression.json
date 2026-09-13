@@ -1,0 +1,81 @@
+{
+  "reviewId": "2caee07b-6d0e-40e4-b0e2-15c6c088907d",
+  "createdAt": "2026-09-11T23:50:15.046707288Z",
+  "score": 80,
+  "status": "FAIL",
+  "summary": {
+    "INFO": 0,
+    "LOW": 0,
+    "MEDIUM": 0,
+    "HIGH": 0,
+    "CRITICAL": 1
+  },
+  "pillarScores": {
+    "SECURITY": {
+      "score": 80,
+      "evaluated": 2,
+      "unknown": 0
+    },
+    "RELIABILITY": {
+      "score": 100,
+      "evaluated": 1,
+      "unknown": 0
+    },
+    "OPERATIONAL_EXCELLENCE": {
+      "score": null,
+      "evaluated": 0,
+      "unknown": 0
+    },
+    "PERFORMANCE_EFFICIENCY": {
+      "score": null,
+      "evaluated": 0,
+      "unknown": 0
+    },
+    "COST_OPTIMIZATION": {
+      "score": 100,
+      "evaluated": 1,
+      "unknown": 0
+    },
+    "SUSTAINABILITY": {
+      "score": 100,
+      "evaluated": 1,
+      "unknown": 0
+    }
+  },
+  "findings": [
+    {
+      "ruleId": "SEC-S3-001",
+      "ruleVersion": "1",
+      "resourceId": "module.assets.aws_s3_bucket.assets",
+      "pillar": "SECURITY",
+      "severity": "CRITICAL",
+      "outcome": "FAIL",
+      "message": "S3 must block all public access",
+      "recommendation": "Configure PublicAccessBlockConfiguration to satisfy this policy; use a dated exception when justified.",
+      "classification": "NEW",
+      "suppressed": false,
+      "suppressionReason": null
+    }
+  ],
+  "resolvedFindings": [],
+  "changes": [
+    {
+      "resourceId": "module.assets.aws_s3_bucket.assets",
+      "resourceType": "AWS::S3::Bucket",
+      "action": "MODIFY",
+      "risk": "RISK_INCREASE",
+      "changedProperties": [
+        "PublicAccessBlockConfiguration"
+      ]
+    }
+  ],
+  "gateReasons": [
+    "Disallowed finding severity"
+  ],
+  "resources": 1,
+  "evaluations": 5,
+  "unsupportedResourceTypes": [],
+  "unknownChecks": 0,
+  "ruleErrors": 0,
+  "gateScore": 80
+}

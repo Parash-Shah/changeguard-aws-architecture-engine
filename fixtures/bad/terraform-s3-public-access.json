@@ -1,0 +1,44 @@
+{
+  "format_version": "1.2",
+  "complete": true,
+  "errored": false,
+  "resource_changes": [
+    {
+      "address": "module.assets.aws_s3_bucket.assets", "mode": "managed", "type": "aws_s3_bucket",
+      "change": {"actions": ["no-op"], "before": {"bucket": "changeguard-demo-assets"}, "after": {"bucket": "changeguard-demo-assets"}}
+    },
+    {
+      "address": "module.assets.aws_s3_bucket_public_access_block.assets", "mode": "managed", "type": "aws_s3_bucket_public_access_block",
+      "change": {
+        "actions": ["update"],
+        "before": {"bucket": "changeguard-demo-assets", "block_public_acls": true, "ignore_public_acls": true, "block_public_policy": true, "restrict_public_buckets": true},
+        "after": {"bucket": "changeguard-demo-assets", "block_public_acls": false, "ignore_public_acls": true, "block_public_policy": true, "restrict_public_buckets": true},
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "module.assets.aws_s3_bucket_versioning.assets", "mode": "managed", "type": "aws_s3_bucket_versioning",
+      "change": {
+        "actions": ["no-op"],
+        "before": {"bucket": "changeguard-demo-assets", "versioning_configuration": [{"status": "Enabled"}]},
+        "after": {"bucket": "changeguard-demo-assets", "versioning_configuration": [{"status": "Enabled"}]}
+      }
+    },
+    {
+      "address": "module.assets.aws_s3_bucket_lifecycle_configuration.assets", "mode": "managed", "type": "aws_s3_bucket_lifecycle_configuration",
+      "change": {
+        "actions": ["no-op"],
+        "before": {"bucket": "changeguard-demo-assets", "rule": [{"id": "expire", "status": "Enabled", "expiration": [{"days": 90}]}]},
+        "after": {"bucket": "changeguard-demo-assets", "rule": [{"id": "expire", "status": "Enabled", "expiration": [{"days": 90}]}]}
+      }
+    },
+    {
+      "address": "module.assets.aws_s3_bucket_server_side_encryption_configuration.assets", "mode": "managed", "type": "aws_s3_bucket_server_side_encryption_configuration",
+      "change": {
+        "actions": ["no-op"],
+        "before": {"bucket": "changeguard-demo-assets", "rule": [{"apply_server_side_encryption_by_default": [{"sse_algorithm": "AES256"}]}]},
+        "after": {"bucket": "changeguard-demo-assets", "rule": [{"apply_server_side_encryption_by_default": [{"sse_algorithm": "AES256"}]}]}
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "Resources": {
     "OrdersDatabase": {"Type":"AWS::RDS::DBInstance","Properties":{"StorageEncrypted":true,"PubliclyAccessible":false,"MultiAZ":true,"BackupRetentionPeriod":7,"DeletionProtection":true,"EnableCloudwatchLogsExports":["postgresql"],"EnablePerformanceInsights":true,"AllocatedStorage":100}},
-    "Assets": {"Type":"AWS::S3::Bucket","Properties":{"PublicAccessBlockConfiguration":{"BlockPublicAcls":true,"IgnorePublicAcls":true,"BlockPublicPolicy":true,"RestrictPublicBuckets":true},"VersioningConfiguration":{"Status":"Enabled"},"LifecycleConfiguration":{"Rules":[{"Status":"Enabled","ExpirationInDays":90}]}}},
+    "Assets": {"Type":"AWS::S3::Bucket","Properties":{"BucketEncryption":{"ServerSideEncryptionConfiguration":[{"ServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]},"PublicAccessBlockConfiguration":{"BlockPublicAcls":true,"IgnorePublicAcls":true,"BlockPublicPolicy":true,"RestrictPublicBuckets":true},"VersioningConfiguration":{"Status":"Enabled"},"LifecycleConfiguration":{"Rules":[{"Status":"Enabled","ExpirationInDays":90}]}}},
     "Reader": {"Type":"AWS::IAM::Policy","Properties":{"PolicyDocument":{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:GetObject","Resource":"arn:aws:s3:::example/orders/*"}]}}},
     "WorkerRole": {"Type":"AWS::IAM::Role","Properties":{"Policies":[{"PolicyName":"reader","PolicyDocument":{"Statement":[{"Effect":"Allow","Action":"sqs:ReceiveMessage","Resource":"arn:aws:sqs:us-east-1:123456789012:orders"}]}}]}},
     "PrivateGroup": {"Type":"AWS::EC2::SecurityGroup","Properties":{"SecurityGroupIngress":[{"IpProtocol":"tcp","FromPort":5432,"ToPort":5432,"CidrIp":"10.0.0.0/16"}]}},
